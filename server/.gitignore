@@ -1,0 +1,4 @@
+serverstatus
+*.test
+coverage.out
+.tags*
