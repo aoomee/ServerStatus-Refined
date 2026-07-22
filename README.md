@@ -84,7 +84,7 @@ ADMIN_TOKEN='your-strong-token' \
   --agent=:35601
 ```
 
-访问 http://127.0.0.1:16888/。Systemd 示例位于 `service/status-server.service`。
+访问 http://127.0.0.1:16888/。
 
 
 启动后访问：
