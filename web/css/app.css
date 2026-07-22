@@ -84,7 +84,7 @@ a:hover{color:var(--accent-hover)}
 .wave-loader.loaded{opacity:0;transition:opacity .3s}
 
 /* ── Overview cards ── */
-.ops-overview{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:.75rem}
+.ops-overview{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:.75rem;min-height:90px}
 .overview-card{background:var(--surface);border-radius:calc(var(--radius) - 2px);padding:.75rem 1.25rem;display:flex;flex-direction:column;gap:.3rem;cursor:pointer;box-shadow:0 4px 6px -1px rgba(0,0,0,.06),0 0 0 1px var(--border);text-align:center;align-items:center}
 .overview-card:hover{box-shadow:0 0 0 1px var(--border-strong)}
 .overview-card .label{font-size:14px;color:var(--text-muted);font-weight:500}
