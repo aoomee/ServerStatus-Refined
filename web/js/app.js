@@ -803,7 +803,14 @@ function bindTabs(){
     S.activeTab = tab;
     scheduleServersRender.cancel();
     document.querySelectorAll('.nav button').forEach(btn => btn.classList.toggle('active', btn === e.target));
-    document.querySelectorAll('.panel').forEach(panel => panel.classList.toggle('active', panel.id === 'panel-' + tab));
+    document.querySelectorAll('.panel').forEach(panel => {
+      const wasActive = panel.classList.contains('active');
+      panel.classList.toggle('active', panel.id === 'panel-' + tab);
+      if(!wasActive && panel.classList.contains('active')){
+        panel.classList.add('panel-enter');
+        setTimeout(() => panel.classList.remove('panel-enter'), 220);
+      }
+    });
     renderActivePanel();
     if(tab === 'config') ensureAdminChecked();
   });
