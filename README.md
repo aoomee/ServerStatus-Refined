@@ -17,8 +17,7 @@
 
 ```bash
 wget -qO ~/serverstatus-config.json \
-  --header='Accept: application/vnd.github.raw' \
-  'https://api.github.com/repos/cppla/ServerStatus/contents/server/config.json?ref=master'
+  'https://raw.githubusercontent.com/aoomee/ServerStatus-Refined/main/server/config.json'
 mkdir -p ~/serverstatus-data
 
 docker run -d --restart=always --name=serverstatus-server \
