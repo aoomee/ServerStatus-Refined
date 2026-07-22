@@ -1,13 +1,15 @@
+version: '3'
+
 services:
   serverstatus:
     image: ghcr.io/aoomee/serverstatus-refined:latest
     container_name: serverstatus-server
     restart: unless-stopped
     ports:
-      - "16888:80"       # WebUI 页面（前面是外网端口，后面是容器内端口）
-      - "35601:35601"    # Agent 数据上报（客户端连这个端口发数据）
+      - "16888:80"
+      - "35601:35601"
     volumes:
-      - ./server/config.json:/app/config/config.json   # 配置文件（节点、证书等）
-      - ./web/json:/app/data                            # 运行时数据（重启不丢）
+      - ./server/config.json:/app/config/config.json
+      - ./web/json:/app/data
     environment:
-      - ADMIN_TOKEN=${ADMIN_TOKEN:-}                    # 管理密码，启动时传入
+      - ADMIN_TOKEN=${ADMIN_TOKEN:-}

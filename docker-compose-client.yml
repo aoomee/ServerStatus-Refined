@@ -1,3 +1,5 @@
+version: '3'
+
 services:
   serverstatus-client:
     image: cppla/serverstatus:client
@@ -6,6 +8,6 @@ services:
     network_mode: host
     pid: host
     environment:
-      - SERVER=127.0.0.1                # 改成你服务端的 IP
-      - USER=s01                        # 改成服务端配置里对应的用户名
-      - PASSWORD=USER_DEFAULT_PASSWORD  # 改成服务端配置里对应的密码
+      - SERVER=127.0.0.1
+      - USER=s01
+      - PASSWORD=USER_DEFAULT_PASSWORD
