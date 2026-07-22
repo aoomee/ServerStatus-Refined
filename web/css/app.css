@@ -187,8 +187,6 @@ table.data thead th:hover{color:var(--text)}
 table.data thead th.sorted-asc:after{content:" ▲";font-size:8px;color:var(--text-muted)}
 table.data thead th.sorted-desc:after{content:" ▼";font-size:8px;color:var(--text-muted)}
 table.data tbody td{padding:.75rem 1rem;border-bottom:1px solid var(--border);font-size:14px;line-height:1.5;vertical-align:middle;white-space:nowrap;color:var(--text);text-align:center}
-table.data tbody tr{animation:rowIn .4s ease-out both}
-@keyframes rowIn{from{opacity:0}to{opacity:1}}
 table.data tbody tr:last-child td{border-bottom:none}
 table.data tbody tr:hover{background:hsla(0,0%,96%,.5);transition:background .15s ease-out}
 table.data tbody tr.offline td{color:var(--text-dim)}
