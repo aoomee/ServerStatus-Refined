@@ -191,8 +191,6 @@ curl -X DELETE -H "Authorization: Bearer ${TOKEN}" \
 
 ## Refined 版 UI 改动说明
 
-## Refined 版 UI 改动说明
-
 本版仅修改 `web/` 目录下的三个文件（`index.html`、`css/app.css`、`js/app.js`），服务端逻辑和构建流程不变：
 
 - **配色**：全局黑白极简风格，绿色 `#16a34a` / 蓝色 `#155dfc` 统一
