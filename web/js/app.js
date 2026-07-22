@@ -701,38 +701,89 @@ function drawLineChart(id, series, emptyText, unit = ''){
   const H = canvas.height;
   canvas.width = W;
   ctx.clearRect(0,0,W,H);
+
+  const cs = getComputedStyle(document.body);
+  const font = cs.getPropertyValue('--font').trim() || 'KaiTi,serif';
+  const isDark = document.body.classList.contains('dark');
+  const textColor = cs.getPropertyValue('--text-muted').trim() || (isDark ? '#94a3b8' : '#6a7282');
+  const textDim   = cs.getPropertyValue('--text-dim').trim()   || (isDark ? '#475569' : '#99a1af');
+  const axisColor = cs.getPropertyValue('--border-strong').trim() || (isDark ? 'rgba(148,163,184,.24)' : '#d1d5dc');
+  const gridColor = cs.getPropertyValue('--border').trim() || (isDark ? 'rgba(148,163,184,.16)' : '#e5e7eb');
+  const bgColor   = cs.getPropertyValue('--bg').trim() || (isDark ? '#0a0a0a' : '#f3f4f6');
+
   const all = series.flatMap(s => s.data).filter(v => Number.isFinite(v));
   if(all.length < 2){
-    ctx.fillStyle = getComputedStyle(document.body).getPropertyValue('--text-dim') || '#7a899d';
-    ctx.font = '12px system-ui';
-    ctx.fillText(emptyText, Math.max(12, W / 2 - 42), H / 2);
+    ctx.fillStyle = textDim;
+    ctx.font = '12px ' + font;
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText(emptyText, W / 2, H / 2);
     return;
   }
-  const padL = unit ? 50 : 42, padR = 10, padT = 12, padB = 20;
+
+  const padL = unit ? 54 : 46, padR = 12, padT = 14, padB = 26;
   let min = Math.min(0, ...all), max = Math.max(...all);
-  if(max - min < 1) max = min + 1;
+  if(max - min < 0.01) max = min + 0.5;
   const range = max - min;
   const n = Math.max(...series.map(s => s.data.length));
   const xStep = (W - padL - padR) / Math.max(1, n - 1);
-  const isDark = document.body.classList.contains('dark');
-  const axis = isDark ? 'rgba(255,255,255,.18)' : 'rgba(0,0,0,.22)';
-  const grid = isDark ? 'rgba(255,255,255,.10)' : 'rgba(0,0,0,.08)';
-  const text = isDark ? 'rgba(226,232,240,.82)' : 'rgba(30,41,59,.7)';
-  ctx.strokeStyle = axis; ctx.lineWidth = 1; ctx.beginPath(); ctx.moveTo(padL,padT); ctx.lineTo(padL,H-padB); ctx.lineTo(W-padR,H-padB); ctx.stroke();
-  ctx.fillStyle = text; ctx.font = '10px system-ui';
-  for(let i=0;i<=4;i++){
-    const y = padT + (H-padT-padB) * i / 4;
-    const val = max - range * i / 4;
-    ctx.fillText(val.toFixed(max < 10 ? 1 : 0) + unit, 4, y + 3);
-    ctx.strokeStyle = grid; ctx.beginPath(); ctx.moveTo(padL,y); ctx.lineTo(W-padR,y); ctx.stroke();
+
+  /* ── 图表区域背景 ── */
+  ctx.fillStyle = bgColor;
+  ctx.beginPath();
+  ctx.rect(padL, padT, W - padL - padR, H - padT - padB);
+  ctx.fill();
+
+  /* ── 水平网格线 + Y 轴标签 (5层) ── */
+  ctx.setLineDash([3, 5]);
+  const numTicks = 4;
+  for(let i = 0; i <= numTicks; i++){
+    const y = padT + (H - padT - padB) * i / numTicks;
+    const val = max - range * i / numTicks;
+
+    // Y 轴标签: 右对齐
+    const lbl = unit === 'ms'
+      ? val.toFixed(0) + unit
+      : val.toFixed(2);
+    ctx.fillStyle = textColor;
+    ctx.font = '10px ' + font;
+    ctx.textAlign = 'right';
+    ctx.textBaseline = 'middle';
+    ctx.fillText(lbl, padL - 6, y);
+
+    // 网格线 (跳过最上和最下)
+    if(i > 0 && i < numTicks){
+      ctx.strokeStyle = gridColor;
+      ctx.beginPath();
+      ctx.moveTo(padL, y);
+      ctx.lineTo(W - padR, y);
+      ctx.stroke();
+    }
   }
+  ctx.setLineDash([]);
+
+  /* ── 坐标轴 ── */
+  ctx.strokeStyle = axisColor;
+  ctx.lineWidth = 1;
+  ctx.beginPath();
+  ctx.moveTo(padL, padT);
+  ctx.lineTo(padL, H - padB);
+  ctx.lineTo(W - padR, H - padB);
+  ctx.stroke();
+
+  /* ── 数据折线 ── */
   series.forEach(item => {
     if(item.data.length < 2) return;
-    ctx.strokeStyle = item.color; ctx.lineWidth = 1.7; ctx.beginPath();
+    ctx.strokeStyle = item.color;
+    ctx.lineWidth = 1.8;
+    ctx.lineCap = 'round';
+    ctx.lineJoin = 'round';
+    ctx.beginPath();
     item.data.forEach((v, i) => {
       const x = padL + xStep * i;
-      const y = padT + (H-padT-padB) * (1 - (v - min) / range);
-      if(i === 0) ctx.moveTo(x,y); else ctx.lineTo(x,y);
+      const y = padT + (H - padT - padB) * (1 - (v - min) / range);
+      if(i === 0) ctx.moveTo(x, y);
+      else ctx.lineTo(x, y);
     });
     ctx.stroke();
   });

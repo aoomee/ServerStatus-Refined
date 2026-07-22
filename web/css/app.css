@@ -254,11 +254,11 @@ body.dark .modal-backdrop{background:rgba(0,0,0,.6)}
 
 .chart-card{padding:.85rem 1rem}
 .chart-head{display:flex;align-items:center;justify-content:center;gap:.6rem;flex-wrap:wrap}
-.chart-head h4{margin:0;font-size:10px;color:var(--text-muted);font-weight:600;letter-spacing:1px;text-transform:uppercase}
+.chart-head h4{margin:0;font-size:11px;color:var(--text-muted);font-weight:600;letter-spacing:.5px}
 .chart-legend{display:inline-flex;align-items:center;gap:.5rem;flex-wrap:wrap;font-size:11px;color:var(--text-muted)}
-.chart-legend span{display:inline-flex;align-items:center;gap:.2rem;white-space:nowrap}
-.chart-legend i{display:inline-block;width:10px;height:3px;border-radius:999px}
-.detail-chart{width:100%;border-radius:calc(var(--radius) - 4px);background:var(--surface);margin-top:.2rem;box-shadow:0 1px 2px rgba(0,0,0,.06),0 0 0 1px var(--border)}
+.chart-legend span{display:inline-flex;align-items:center;gap:.25rem;white-space:nowrap}
+.chart-legend i{display:inline-block;width:10px;height:2.5px;border-radius:999px}
+.detail-chart{width:100%;border-radius:calc(var(--radius) - 4px);margin-top:.25rem;box-shadow:0 1px 2px rgba(0,0,0,.06),0 0 0 1px var(--border)}
 
 
 /* ── Config management ── */
