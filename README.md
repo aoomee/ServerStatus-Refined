@@ -13,7 +13,7 @@
 ---
 
 ## 一、服务端
-### 方式一：Docker Run（推荐，30 秒部署）
+### 方式一：Docker Run
 
 ```bash
 wget -qO ~/serverstatus-config.json \
@@ -75,8 +75,25 @@ docker compose up -d
 
 ## 二、客户端
 
+`docker-compose-client.yml`：
+
+```yaml
+version: '3'
+
+services:
+  serverstatus-client:
+    image: cppla/serverstatus:client
+    container_name: serverstatus-client
+    restart: unless-stopped
+    network_mode: host
+    pid: host
+    environment:
+      - SERVER=127.0.0.1                # 改成服务端 IP
+      - USER=s01                        # 改成服务端配置的用户名
+      - PASSWORD=USER_DEFAULT_PASSWORD  # 改成服务端配置的密码
+```
+
 ```bash
-# Docker Compose，本地构建加：--build
 SERVER=127.0.0.1 USER=s01 PASSWORD=USER_DEFAULT_PASSWORD \
 docker compose -f docker-compose-client.yml up -d --force-recreate
 ```
