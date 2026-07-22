@@ -14,19 +14,10 @@
 
 ## 一、服务端
 
-```bash
-# 克隆 Refined 版
-git clone https://github.com/aoomee/ServerStatus-Refined.git
-cd ServerStatus-Refined
-
-# Docker Compose 启动（本地构建加 --build）
-ADMIN_TOKEN='your-strong-token' docker compose -f docker-compose-server.yml up -d --build
-```
+### 方式一：Docker Run（推荐，无需编译）
 
 ```bash
-# 也可以 docker run（需先构建本地镜像）
-docker build -f Dockerfile.server -t serverstatus-refined:server .
-
+# 下载示例配置文件
 wget -qO ~/serverstatus-config.json \
   --header='Accept: application/vnd.github.raw' \
   'https://api.github.com/repos/cppla/ServerStatus/contents/server/config.json?ref=master'
@@ -37,8 +28,22 @@ docker run -d --restart=always --name=serverstatus-server \
   -v ~/serverstatus-config.json:/app/config/config.json \
   -v ~/serverstatus-data:/app/data \
   -p 16888:80 -p 35601:35601 \
-  serverstatus-refined:server
+  ghcr.io/aoomee/serverstatus-refined:latest
 ```
+
+30 秒搞定，直接用 GitHub 自动构建好的镜像。
+
+### 方式二：Docker Compose（适合二次开发）
+
+```bash
+git clone https://github.com/aoomee/ServerStatus-Refined.git
+cd ServerStatus-Refined
+
+ADMIN_TOKEN='your-strong-token' docker compose -f docker-compose-server.yml up -d --build
+```
+
+从源码构建，可自行修改 web/ 前端后重建。
+
 
 启动后访问：
 
