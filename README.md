@@ -13,11 +13,9 @@
 ---
 
 ## 一、服务端
-
-### 方式一：Docker Run（推荐，无需编译）
+### 方式一：Docker Run（推荐，30 秒部署）
 
 ```bash
-# 下载示例配置文件
 wget -qO ~/serverstatus-config.json \
   --header='Accept: application/vnd.github.raw' \
   'https://api.github.com/repos/cppla/ServerStatus/contents/server/config.json?ref=master'
@@ -31,18 +29,16 @@ docker run -d --restart=always --name=serverstatus-server \
   ghcr.io/aoomee/serverstatus-refined:latest
 ```
 
-30 秒搞定，直接用 GitHub 自动构建好的镜像。
-
-### 方式二：Docker Compose（适合二次开发）
+### 方式二：Docker Compose
 
 ```bash
 git clone https://github.com/aoomee/ServerStatus-Refined.git
 cd ServerStatus-Refined
 
-ADMIN_TOKEN='your-strong-token' docker compose -f docker-compose-server.yml up -d --build
+ADMIN_TOKEN='your-strong-token' docker compose -f docker-compose-server.yml up -d
 ```
 
-从源码构建，可自行修改 web/ 前端后重建。
+自动拉取 GitHub 预构建镜像，无需本地编译。
 
 
 启动后访问：
