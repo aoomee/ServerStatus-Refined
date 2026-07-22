@@ -215,10 +215,9 @@ async function fetchData(){
     S.ssl = data.sslcerts || [];
     render();
   }catch(err){
-    console.error('fetchData error:', err);
     if(!S._firstRenderDone){
       const loader = $('loader');
-      if(loader) { loader.innerHTML = '<div style="color:var(--text-muted);font-size:14px">数据加载失败，请刷新页面</div>'; }
+      if(loader) { loader.innerHTML = '<div style="color:var(--text-muted);font-size:14px">数据加载失败，请刷新页面</div>'; loader.classList.add('loaded'); }
     }
   }
 }
@@ -268,8 +267,10 @@ function render(){
   if(!S._firstRenderDone){
     S._firstRenderDone = true;
     const loader = $('loader');
+    const main = $('mainContent');
     if(loader) loader.classList.add('loaded');
-    setTimeout(() => { if(loader) loader.remove(); }, 400);
+    if(main) main.style.opacity = '1';
+    setTimeout(() => { if(loader) loader.style.display = 'none'; }, 350);
   }
   renderOverview();
   renderActivePanel();
@@ -522,9 +523,7 @@ function renderServers(){
   });
   if(!rows.length){
     if(tbody.dataset.empty !== 'servers'){
-      tbody.innerHTML = S._firstRenderDone
-        ? `<tr class="empty-row"><td colspan="13" class="muted" style="text-align:center;padding:1rem;">无数据</td></tr>`
-        : `<tr class="empty-row"><td colspan="13" style="text-align:center;padding:1rem;"></td></tr>`;
+      tbody.innerHTML = `<tr class="empty-row"><td colspan="13" class="muted" style="text-align:center;padding:1rem;">无数据</td></tr>`;
       tbody.dataset.empty = 'servers';
     }
     return;
@@ -1161,8 +1160,6 @@ bindFilters();
 bindServerInteractions();
 bindAdmin();
 updateLayoutToggleButton();
-renderOverview();
-renderActivePanel();
 fetchData();
 setInterval(fetchData, 1000);
 setInterval(updateTime, 60000);
