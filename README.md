@@ -39,6 +39,9 @@ version: '3'
 services:
   serverstatus:
     image: ghcr.io/aoomee/serverstatus-refined:latest
+    build:
+      context: .
+      dockerfile: Dockerfile.server
     container_name: serverstatus-server
     restart: unless-stopped
     ports:
@@ -51,11 +54,32 @@ services:
       - ADMIN_TOKEN=${ADMIN_TOKEN:-}   # 改成你的密码
 ```
 
+`docker-compose-client.yml`（每台被监控的机器上运行）：
+
+```yaml
+version: '3'
+
+services:
+  serverstatus-client:
+    image: cppla/serverstatus:client
+    container_name: serverstatus-client
+    restart: unless-stopped
+    network_mode: host
+    pid: host
+    environment:
+      - SERVER=127.0.0.1                # 改成服务端 IP
+      - USER=s01                        # 改成服务端配置的用户名
+      - PASSWORD=USER_DEFAULT_PASSWORD  # 改成服务端配置的密码
+```
+
 ```bash
+# 服务端
 git clone https://github.com/aoomee/ServerStatus-Refined.git
 cd ServerStatus-Refined
-
 ADMIN_TOKEN='your-strong-token' docker compose up -d
+
+# 客户端（每台被监控的机器）
+SERVER=你的服务端IP USER=s01 PASSWORD=你的密码 docker compose -f docker-compose-client.yml up -d
 ```
 
 
