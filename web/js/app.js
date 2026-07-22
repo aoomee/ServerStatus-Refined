@@ -1159,6 +1159,8 @@ bindFilters();
 bindServerInteractions();
 bindAdmin();
 updateLayoutToggleButton();
+renderOverview();
+renderActivePanel();
 fetchData();
 setInterval(fetchData, 1000);
 setInterval(updateTime, 60000);
