@@ -215,9 +215,10 @@ async function fetchData(){
     S.ssl = data.sslcerts || [];
     render();
   }catch(err){
+    console.error('fetchData error:', err);
     if(!S._firstRenderDone){
       const loader = $('loader');
-      if(loader) { loader.innerHTML = '<div style="color:var(--text-muted);font-size:14px">数据加载失败，请刷新页面</div>'; loader.classList.add('loaded'); }
+      if(loader) { loader.innerHTML = '<div style="color:var(--text-muted);font-size:14px">数据加载失败，请刷新页面</div>'; }
     }
   }
 }
@@ -270,7 +271,7 @@ function render(){
     const main = $('mainContent');
     if(loader) loader.classList.add('loaded');
     if(main) main.style.opacity = '1';
-    setTimeout(() => { if(loader) loader.style.display = 'none'; }, 350);
+    setTimeout(() => { if(loader) loader.remove(); }, 350);
   }
   renderOverview();
   renderActivePanel();
