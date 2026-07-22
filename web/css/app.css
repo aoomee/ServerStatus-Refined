@@ -58,7 +58,7 @@ a:hover{color:var(--accent-hover)}
 
 /* ── Topbar (Nezha-style minimal header) ── */
 @keyframes fadeIn{from{opacity:0;transform:scale(.95)}to{opacity:1;transform:scale(1)}}
-.topbar{animation:fadeIn .4s ease-out}
+.topbar,.ops-overview,.ops-toolbar,.table-wrap{animation:fadeIn .4s ease-out both}
 
 .topbar{position:sticky;top:0;z-index:20;display:flex;align-items:center;gap:1rem;padding:.75rem 1.5rem;background:var(--bg);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);color:var(--text);border-bottom:1px solid var(--border)}
 .brand{font-weight:600;font-size:16px;display:flex;align-items:center;gap:.45rem;letter-spacing:-.2px}
