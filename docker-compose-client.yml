@@ -6,8 +6,6 @@ services:
     network_mode: host
     pid: host
     environment:
-      - SERVER=${SERVER:-127.0.0.1}
-      - USER=${USER:-s01}
-      - PASSWORD=${PASSWORD:-USER_DEFAULT_PASSWORD}
-      - PORT=${PORT:-35601}
-      - INTERVAL=${INTERVAL:-1}
+      - SERVER=127.0.0.1                # 改成你服务端的 IP
+      - USER=s01                        # 改成服务端配置里对应的用户名
+      - PASSWORD=USER_DEFAULT_PASSWORD  # 改成服务端配置里对应的密码
