@@ -268,10 +268,8 @@ function render(){
   if(!S._firstRenderDone){
     S._firstRenderDone = true;
     const loader = $('loader');
-    const main = $('mainContent');
     if(loader) loader.classList.add('loaded');
-    if(main) main.style.opacity = '1';
-    setTimeout(() => { if(loader) loader.remove(); }, 350);
+    setTimeout(() => { if(loader) loader.remove(); }, 400);
   }
   renderOverview();
   renderActivePanel();
