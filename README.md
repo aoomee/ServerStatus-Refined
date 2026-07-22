@@ -31,6 +31,26 @@ docker run -d --restart=always --name=serverstatus-server \
 
 ### 方式二：Docker Compose
 
+`docker-compose.yml`：
+
+```yaml
+version: '3'
+
+services:
+  serverstatus:
+    image: ghcr.io/aoomee/serverstatus-refined:latest
+    container_name: serverstatus-server
+    restart: unless-stopped
+    ports:
+      - "16888:80"       # 外网端口，可以改
+      - "35601:35601"    # Agent 上报端口，不能改
+    volumes:
+      - ./server/config.json:/app/config/config.json
+      - ./web/json:/app/data
+    environment:
+      - ADMIN_TOKEN=${ADMIN_TOKEN:-}   # 改成你的密码
+```
+
 ```bash
 git clone https://github.com/aoomee/ServerStatus-Refined.git
 cd ServerStatus-Refined
