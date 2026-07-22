@@ -26,7 +26,7 @@ docker run -d --restart=always --name=serverstatus-server \
   -v ~/serverstatus-config.json:/app/config/config.json \
   -v ~/serverstatus-data:/app/data \
   -p 16888:80 -p 35601:35601 \
-  ghcr.io/aoomee/ServerStatus-Refined:latest
+  ghcr.io/aoomee/serverstatus-refined:latest
 ```
 
 ### 方式二：Docker Compose

@@ -33,8 +33,8 @@ jobs:
           file: Dockerfile.server
           push: true
           tags: |
-            ghcr.io/${{ github.repository }}:latest
-            ghcr.io/${{ github.repository }}:${{ github.sha }}
+            ghcr.io/aoomee/serverstatus-refined:latest
+            ghcr.io/aoomee/serverstatus-refined:${{ github.sha }}
 
       - name: 构建完成
-        run: echo "镜像已推送到 ghcr.io/${{ github.repository }}"
+        run: echo "镜像已推送到 ghcr.io/aoomee/serverstatus-refined"

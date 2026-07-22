@@ -2,7 +2,7 @@ version: '3'
 
 services:
   serverstatus:
-    image: ghcr.io/aoomee/ServerStatus-Refined:latest
+    image: ghcr.io/aoomee/serverstatus-refined:latest
     build:
       context: .
       dockerfile: Dockerfile.server
