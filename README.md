@@ -51,7 +51,7 @@ services:
       - ./server/config.json:/app/config/config.json
       - ./web/json:/app/data
     environment:
-      - ADMIN_TOKEN=${ADMIN_TOKEN:-}   # 改成你的密码
+      - ADMIN_TOKEN=${ADMIN_TOKEN:-}   # 启动命令传入，不要改文件
 ```
 
 `docker-compose-client.yml`（每台被监控的机器上运行）：
