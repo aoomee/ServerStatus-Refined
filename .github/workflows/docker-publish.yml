@@ -35,3 +35,6 @@ jobs:
           tags: |
             ghcr.io/${{ github.repository }}:latest
             ghcr.io/${{ github.repository }}:${{ github.sha }}
+
+      - name: 构建完成
+        run: echo "镜像已推送到 ghcr.io/${{ github.repository }}"
