@@ -89,10 +89,10 @@ ADMIN_TOKEN='your-strong-token' \
 
 启动后访问：
 
-- WebUI：http://127.0.0.1:8080/
-- 健康检查：http://127.0.0.1:8080/api/health
-- API 描述：http://127.0.0.1:8080/api/schema
-- OpenAPI 3.1：http://127.0.0.1:8080/api/openapi.json
+- WebUI：http://127.0.0.1:16888/
+- 健康检查：http://127.0.0.1:16888/api/health
+- API 描述：http://127.0.0.1:16888/api/schema
+- OpenAPI 3.1：http://127.0.0.1:16888/api/openapi.json
 - 客户端上报端口：`35601/tcp`
 
 `ADMIN_TOKEN` 不设置时，监控页面仍可读取，管理 API 返回 `503`，WebUI 的「配置」页不能修改数据。
@@ -236,19 +236,19 @@ Authorization: Bearer <ADMIN_TOKEN>
 ```bash
 TOKEN='请替换为 ADMIN_TOKEN'
 
-curl http://127.0.0.1:8080/api/health
+curl http://127.0.0.1:16888/api/health
 
 curl -H "Authorization: Bearer ${TOKEN}" \
-  http://127.0.0.1:8080/api/config
+  http://127.0.0.1:16888/api/config
 
-curl -X POST http://127.0.0.1:8080/api/servers \
+curl -X POST http://127.0.0.1:16888/api/servers \
   -H "Authorization: Bearer ${TOKEN}" \
   -H 'Content-Type: application/json' \
   -d '{"username":"s05","name":"node5","type":"kvm","host":"host5","location":"SG","password":"change-me","monthstart":1}'
 
 curl -X DELETE \
   -H "Authorization: Bearer ${TOKEN}" \
-  http://127.0.0.1:8080/api/servers/s05
+  http://127.0.0.1:16888/api/servers/s05
 ```
 
 请求体最大为 `1 MiB`。AI Agent 可直接导入 `/api/openapi.json`；轻量客户端也可以先读取 `/api/schema`，再根据返回的集合字段调用 CRUD 接口。
