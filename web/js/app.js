@@ -724,8 +724,8 @@ function drawLineChart(id, series, emptyText, unit = ''){
     return;
   }
 
-  /* ── 布局: 左右对称的绘图区 ── */
-  const padL = 50, padR = 20, padT = 14, padB = 26;
+  /* ── 绘图区上下左右均居中 ── */
+  const padL = 48, padR = 48, padT = 20, padB = 20;
   let min = Math.min(0, ...all), max = Math.max(...all);
   if(max - min < 0.01) max = min + 0.5;
   const range = max - min;

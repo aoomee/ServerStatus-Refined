@@ -253,7 +253,7 @@ body.dark .modal-backdrop{background:rgba(0,0,0,.6)}
 .title-chips .cpu-model-chip{background:var(--surface-hover);color:var(--text);border-color:var(--border-strong);max-width:140px;overflow:hidden;text-overflow:ellipsis}
 .mono{font-family:var(--mono)}
 
-.chart-card{padding:.85rem 1rem}
+.chart-card{padding:.85rem 1rem;display:flex;flex-direction:column;align-items:center}
 .chart-head{display:flex;align-items:center;justify-content:center;gap:.6rem;flex-wrap:wrap}
 .chart-head h4{margin:0;font-size:11px;color:var(--text-muted);font-weight:600;letter-spacing:.5px}
 .chart-legend{display:inline-flex;align-items:center;gap:.5rem;flex-wrap:wrap;font-size:11px;color:var(--text-muted)}
