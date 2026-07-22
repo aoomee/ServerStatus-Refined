@@ -877,7 +877,7 @@ const CONFIG_TYPES = {
       { name:'location', label:'位置', required:true, max:120, placeholder:'🇨🇳 / 上海 / hk-01' },
       { name:'password', label:'密码', required:true, max:120, keepRaw:true },
       { name:'monthstart', label:'月初日', type:'number', min:1, max:28, default:1 },
-      { name:'disabled', label:'禁用节点', type:'checkbox' }
+      { name:'disabled', label:'禁用节点', type:'checkbox', default: false }
     ],
     title: item => item?.name || item?.username || '未命名节点',
     meta: item => `${item?.location || '-'} / ${item?.type || '-'} / ${item?.host || '-'}`,
