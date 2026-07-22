@@ -24,7 +24,9 @@ ADMIN_TOKEN='your-strong-token' docker compose -f docker-compose-server.yml up -
 ```
 
 ```bash
-# 也可以 docker run（需先下载 config.json）
+# 也可以 docker run（需先构建本地镜像）
+docker build -f Dockerfile.server -t serverstatus-refined:server .
+
 wget -qO ~/serverstatus-config.json \
   --header='Accept: application/vnd.github.raw' \
   'https://api.github.com/repos/cppla/ServerStatus/contents/server/config.json?ref=master'
@@ -35,7 +37,7 @@ docker run -d --restart=always --name=serverstatus-server \
   -v ~/serverstatus-config.json:/app/config/config.json \
   -v ~/serverstatus-data:/app/data \
   -p 8080:80 -p 35601:35601 \
-  cppla/serverstatus:server
+  serverstatus-refined:server
 ```
 
 启动后访问：
