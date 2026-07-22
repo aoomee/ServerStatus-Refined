@@ -41,7 +41,11 @@
     </header>
 
     <main class="wrapper">
-        <div id="notice" class="notice info">初始化中...</div>
+        <div id="loader" class="wave-loader">
+            <span></span><span></span><span></span><span></span><span></span>
+        </div>
+        <div id="mainContent" style="opacity:0;transition:opacity .3s">
+
 
         <section class="ops-overview" id="overviewCards" aria-label="运行概览"></section>
 
@@ -195,6 +199,7 @@
                 </section>
             </div>
         </section>
+        </div>
     </main>
 
     <!-- 详情抽屉 -->
