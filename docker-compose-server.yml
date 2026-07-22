@@ -23,7 +23,7 @@ services:
       - ./web/json:/app/data
     ports:
       - 35601:35601
-      - 8080:80
+      - 16888:80
 
 networks:
   serverstatus-network:

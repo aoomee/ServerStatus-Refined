@@ -36,7 +36,7 @@ docker run -d --restart=always --name=serverstatus-server \
   -e ADMIN_TOKEN='your-strong-token' \
   -v ~/serverstatus-config.json:/app/config/config.json \
   -v ~/serverstatus-data:/app/data \
-  -p 8080:80 -p 35601:35601 \
+  -p 16888:80 -p 35601:35601 \
   serverstatus-refined:server
 ```
 
