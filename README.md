@@ -35,10 +35,8 @@ docker run -d --restart=always --name=serverstatus-server \
 git clone https://github.com/aoomee/ServerStatus-Refined.git
 cd ServerStatus-Refined
 
-ADMIN_TOKEN='your-strong-token' docker compose -f docker-compose-server.yml up -d
+ADMIN_TOKEN='your-strong-token' docker compose up -d
 ```
-
-自动拉取 GitHub 预构建镜像，无需本地编译。
 
 
 启动后访问：
@@ -338,7 +336,7 @@ docker build -f Dockerfile.server -t serverstatus:server .
 docker build -f Dockerfile.client -t serverstatus:client .
 
 # Compose 配置
-docker compose -f docker-compose-server.yml config
+docker compose -f docker-compose.yml config
 docker compose -f docker-compose-client.yml config
 ```
 
