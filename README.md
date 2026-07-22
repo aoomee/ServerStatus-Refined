@@ -62,6 +62,30 @@ docker compose up -d
 
 客户端部署见下方 [二、客户端](#二客户端)。
 
+### 方式三：二进制/源码编译
+
+需要 Go `1.25` 或更高版本：
+
+```bash
+cd server
+go mod download
+go build -trimpath -ldflags='-s -w' -o serverstatus .
+```
+
+从 `server/` 目录启动：
+
+```bash
+ADMIN_TOKEN='your-strong-token' \
+./serverstatus \
+  --config=config.json \
+  --stats=../web/json/stats.json \
+  --web-dir=../web \
+  --http=:16888 \
+  --agent=:35601
+```
+
+访问 http://127.0.0.1:16888/。Systemd 示例位于 `service/status-server.service`。
+
 
 启动后访问：
 
@@ -74,6 +98,19 @@ docker compose up -d
 `ADMIN_TOKEN` 不设置时，监控页面仍可读取，管理 API 返回 `503`，WebUI 的「配置」页不能修改数据。
 
 ## 二、客户端
+
+### 方式一：Docker Run
+
+```bash
+docker run -d --restart=always --name=serverstatus-client \
+  --network=host --pid=host \
+  -e SERVER=127.0.0.1 \
+  -e USER=s01 \
+  -e PASSWORD=USER_DEFAULT_PASSWORD \
+  cppla/serverstatus:client
+```
+
+### 方式二：Docker Compose
 
 `docker-compose-client.yml`：
 
@@ -98,18 +135,9 @@ SERVER=127.0.0.1 USER=s01 PASSWORD=USER_DEFAULT_PASSWORD \
 docker compose -f docker-compose-client.yml up -d --force-recreate
 ```
 
-```bash
-# Docker Run
-docker run -d --restart=always --name=serverstatus-client \
-  --network=host --pid=host \
-  -e SERVER=127.0.0.1 \
-  -e USER=s01 \
-  -e PASSWORD=USER_DEFAULT_PASSWORD \
-  cppla/serverstatus:client
-```
+### 方式三：Shell 脚本
 
 ```bash
-# Shell Run
 wget -qO client-linux.py --header='Accept: application/vnd.github.raw' \
   'https://api.github.com/repos/cppla/ServerStatus/contents/clients/client-linux.py?ref=master'
 nohup python3 client-linux.py SERVER=127.0.0.1 USER=s01 PASSWORD=USER_DEFAULT_PASSWORD >/dev/null 2>&1 &
