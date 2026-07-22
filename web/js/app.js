@@ -697,9 +697,12 @@ function drawLineChart(id, series, emptyText, unit = ''){
   const canvas = $(id);
   if(!canvas) return;
   const ctx = canvas.getContext('2d');
-  const W = canvas.clientWidth || canvas.width;
-  const H = canvas.height;
-  canvas.width = W;
+  const dpr = window.devicePixelRatio || 1;
+  const W = canvas.clientWidth;
+  const H = canvas.clientHeight;
+  canvas.width  = Math.round(W * dpr);
+  canvas.height = Math.round(H * dpr);
+  ctx.scale(dpr, dpr);
   ctx.clearRect(0,0,W,H);
 
   const cs = getComputedStyle(document.body);
@@ -714,14 +717,15 @@ function drawLineChart(id, series, emptyText, unit = ''){
   const all = series.flatMap(s => s.data).filter(v => Number.isFinite(v));
   if(all.length < 2){
     ctx.fillStyle = textDim;
-    ctx.font = '12px ' + font;
+    ctx.font = '13px ' + font;
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
     ctx.fillText(emptyText, W / 2, H / 2);
     return;
   }
 
-  const padL = unit ? 54 : 46, padR = 12, padT = 14, padB = 26;
+  /* ── 布局: 左右对称的绘图区 ── */
+  const padL = 50, padR = 20, padT = 14, padB = 26;
   let min = Math.min(0, ...all), max = Math.max(...all);
   if(max - min < 0.01) max = min + 0.5;
   const range = max - min;
@@ -734,24 +738,22 @@ function drawLineChart(id, series, emptyText, unit = ''){
   ctx.rect(padL, padT, W - padL - padR, H - padT - padB);
   ctx.fill();
 
-  /* ── 水平网格线 + Y 轴标签 (5层) ── */
+  /* ── 水平网格线 + Y 轴标签 ── */
   ctx.setLineDash([3, 5]);
   const numTicks = 4;
   for(let i = 0; i <= numTicks; i++){
     const y = padT + (H - padT - padB) * i / numTicks;
     const val = max - range * i / numTicks;
 
-    // Y 轴标签: 右对齐
     const lbl = unit === 'ms'
       ? val.toFixed(0) + unit
       : val.toFixed(2);
     ctx.fillStyle = textColor;
-    ctx.font = '10px ' + font;
+    ctx.font = '11px ' + font;
     ctx.textAlign = 'right';
     ctx.textBaseline = 'middle';
     ctx.fillText(lbl, padL - 6, y);
 
-    // 网格线 (跳过最上和最下)
     if(i > 0 && i < numTicks){
       ctx.strokeStyle = gridColor;
       ctx.beginPath();
