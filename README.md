@@ -51,7 +51,7 @@ services:
       - ./server/config.json:/app/config/config.json
       - ./web/json:/app/data
     environment:
-      - ADMIN_TOKEN=${ADMIN_TOKEN:-}   # 启动命令传入，不要改文件
+      - ADMIN_TOKEN=your-password-here   # 把这里改成你的密码
 ```
 
 `docker-compose-client.yml`（每台被监控的机器上运行）：
@@ -76,7 +76,7 @@ services:
 # 服务端
 git clone https://github.com/aoomee/ServerStatus-Refined.git
 cd ServerStatus-Refined
-ADMIN_TOKEN='your-strong-token' docker compose up -d
+docker compose up -d
 
 # 客户端（每台被监控的机器）
 SERVER=你的服务端IP USER=s01 PASSWORD=你的密码 docker compose -f docker-compose-client.yml up -d

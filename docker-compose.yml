@@ -15,4 +15,4 @@ services:
       - ./server/config.json:/app/config/config.json
       - ./web/json:/app/data
     environment:
-      - ADMIN_TOKEN=${ADMIN_TOKEN:-}   # 启动时传入：ADMIN_TOKEN='你的密码' docker compose up -d
+      - ADMIN_TOKEN=your-password-here   # 把这里改成你的密码
