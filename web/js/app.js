@@ -271,7 +271,7 @@ function render(){
     const loader = $('loader');
     const main = $('mainContent');
     if(loader) loader.classList.add('loaded');
-    if(main) main.style.opacity = '1';
+    if(main) main.classList.add('revealed');
     setTimeout(() => { if(loader) loader.style.display = 'none'; }, 350);
   }
   renderOverview();
