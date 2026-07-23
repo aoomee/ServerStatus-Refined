@@ -72,7 +72,7 @@ a:hover{color:var(--accent-hover)}
 
 /* ── Wrapper ── */
 .wrapper{max-width:1400px;margin:0 auto;padding:1.5rem;display:flex;flex-direction:column;gap:1rem}
-#mainContent{display:flex;flex-direction:column;gap:1.5rem}
+#mainContent{display:flex;flex-direction:column;gap:2rem}
 
 /* ── Wave Loader ── */
 .wave-loader{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);display:flex;align-items:flex-end;justify-content:center;gap:6px;z-index:100;pointer-events:none}
@@ -85,7 +85,7 @@ a:hover{color:var(--accent-hover)}
 .wave-loader.loaded{opacity:0;transition:opacity .3s}
 
 /* ── Overview cards ── */
-.ops-overview{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:.75rem;min-height:90px}
+.ops-overview{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:.75rem;min-height:90px;margin-bottom:0}
 .overview-card{background:var(--surface);border-radius:calc(var(--radius) - 2px);padding:.75rem 1.25rem;display:flex;flex-direction:column;gap:.3rem;cursor:pointer;box-shadow:0 4px 6px -1px rgba(0,0,0,.06),0 0 0 1px var(--border);text-align:center;align-items:center}
 .overview-card:hover{box-shadow:0 0 0 1px var(--border-strong)}
 .overview-card .label{font-size:14px;color:var(--text-muted);font-weight:500}
@@ -112,7 +112,7 @@ body.dark .warn-btn{color:var(--yellow)}
 body.dark .danger-btn{color:var(--red)}
 
 /* ── Panel ── */
-.panel{display:none;flex-direction:column;gap:1rem}
+.panel{display:none;flex-direction:column;gap:1rem;margin-top:0}
 .panel.active{display:flex}
 .panel.panel-enter{animation:nezhaFade .2s ease-out}
 
