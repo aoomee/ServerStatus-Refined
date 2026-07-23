@@ -554,11 +554,16 @@ function renderServersCards(){
     const cpuColor = cpuPct >= 90 ? 'bad' : cpuPct >= 75 ? 'warn' : 'cpu';
     const memColor = m.memPct >= 90 ? 'bad' : m.memPct >= 80 ? 'warn' : 'mem';
     const hddColor = m.hddPct >= 90 ? 'bad' : m.hddPct >= 85 ? 'warn' : 'hdd';
+    const netNow = `${humanMinKBFromB(s.network_rx)} ↓ ${humanMinKBFromB(s.network_tx)} ↑`;
     return `<div class="card${m.online ? '' : ' offline'}${alertClass}${osClass(s.os)}" data-key="${esc(s._key)}" data-online="${m.online ? 1 : 0}">
       <div class="card-header"><div class="card-title">${esc(s.name || '-')}${spec ? `<span class="card-spec-chip" title="CPU 核心 / 总内存">${esc(spec)}</span>` : ''} <span class="tag">${esc(s.location || '-')}</span></div>${protoPill(s)}</div>
+      <div class="card-traffic">
+        <div class="traffic-label">月流量</div>
+        <div class="traffic-value">${trafficCaps(s)}</div>
+      </div>
       <div class="kvlist">
         <div><span class="key">时长</span><span>${esc(s.uptime || '-')}</span></div>
-        <div><span class="key">内容</span><span>${esc(s.type || '-')}</span></div>
+        <div><span class="key">网络</span><span class="net-now">${netNow}</span></div>
         <div><span class="key">CPU</span><span>${cpuPct.toFixed(0)}%</span></div>
         <div><span class="key">内存</span><span>${m.memPct.toFixed(0)}%</span></div>
         <div class="progress-bar ${cpuColor}"><i style="width:${cpuPct.toFixed(1)}%"></i></div>
@@ -568,7 +573,6 @@ function renderServersCards(){
         <div class="info-row"><span>硬盘</span><span>${humanMinMBFromMB(s.hdd_used)} / ${humanMinMBFromMB(s.hdd_total)}</span></div>
         <div class="progress-bar ${hddColor}"><i style="width:${m.hddPct.toFixed(1)}%"></i></div>
         <div class="info-row"><span>处理器</span><span>${esc(shortCpuModel(cpuModelLabel(s)) || s.host || '-')}</span></div>
-        <div class="info-row"><span>月流量</span><span>${trafficCaps(s, true)}</span></div>
       </div>
     </div>`;
   }).join('') || '<div class="empty-state">无数据</div>';
