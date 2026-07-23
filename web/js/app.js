@@ -583,19 +583,19 @@ function renderServersCards(){
         <div class="info-row"><span>负载</span><span>${loadStr}</span></div>
         <div class="info-row"><span>延迟</span><span>${pingAvg} ms</span></div>
         <div class="info-row loss-row"><span>丢包</span><span>${lossStr}%</span></div>
-      </div>
-      <div class="card-loss-pills">
-        <div class="loss-pill-cell">
-          <div class="loss-pill ${losses[0] >= 60 ? 'bad' : losses[0] >= 30 ? 'warn' : 'ok'}" style="--h:${(losses[0]/100).toFixed(2)}"><span class="lp-fill"></span></div>
-          <span class="loss-pill-label">联通</span>
-        </div>
-        <div class="loss-pill-cell">
-          <div class="loss-pill ${losses[1] >= 60 ? 'bad' : losses[1] >= 30 ? 'warn' : 'ok'}" style="--h:${(losses[1]/100).toFixed(2)}"><span class="lp-fill"></span></div>
-          <span class="loss-pill-label">电信</span>
-        </div>
-        <div class="loss-pill-cell">
-          <div class="loss-pill ${losses[2] >= 60 ? 'bad' : losses[2] >= 30 ? 'warn' : 'ok'}" style="--h:${(losses[2]/100).toFixed(2)}"><span class="lp-fill"></span></div>
-          <span class="loss-pill-label">移动</span>
+        <div class="card-loss-pills">
+          <div class="loss-pill-cell">
+            <div class="loss-pill ${losses[0] >= 60 ? 'bad' : losses[0] >= 30 ? 'warn' : 'ok'}" style="--h:${(losses[0]/100).toFixed(2)}"><span class="lp-fill"></span></div>
+            <span class="loss-pill-label">联通</span>
+          </div>
+          <div class="loss-pill-cell">
+            <div class="loss-pill ${losses[1] >= 60 ? 'bad' : losses[1] >= 30 ? 'warn' : 'ok'}" style="--h:${(losses[1]/100).toFixed(2)}"><span class="lp-fill"></span></div>
+            <span class="loss-pill-label">电信</span>
+          </div>
+          <div class="loss-pill-cell">
+            <div class="loss-pill ${losses[2] >= 60 ? 'bad' : losses[2] >= 30 ? 'warn' : 'ok'}" style="--h:${(losses[2]/100).toFixed(2)}"><span class="lp-fill"></span></div>
+            <span class="loss-pill-label">移动</span>
+          </div>
         </div>
       </div>
     </div>`;
