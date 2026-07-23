@@ -46,19 +46,15 @@ docker run -d --restart=always --name=serverstatus-server \
 services:
   serverstatus:
     image: ghcr.io/aoomee/serverstatus-refined:latest
-    build:
-      context: .
-      dockerfile: Dockerfile.server
     container_name: serverstatus-server
     restart: unless-stopped
     ports:
       - "16888:80"       # WebUI 端口
       - "35601:35601"    # Agent 上报端口
     volumes:
-      - ./server/config.json:/app/config/config.json
-      - ./web/json:/app/data
+      - ./data:/app/data
     environment:
-      - ADMIN_TOKEN=your-password-here
+      - ADMIN_TOKEN=VpsTest2026!
 ```
 
 ```bash
