@@ -682,21 +682,6 @@ function serverCardHTML(s, m, structSig){
       <div class="info-row"><span>在线</span><span>${esc(s.uptime || '-')}</span></div>
       <div class="info-row"><span>负载</span><span>${loadStr}</span></div>
       <div class="info-row"><span>延迟</span><span>${pingAvg > 0 ? pingAvg + ' ms' : '–'}</span></div>
-      <div class="info-row loss-row"><span>三网</span><span>${pingStr} ms</span></div>
-      <div class="card-loss-pills">
-        <div class="loss-pill-cell">
-          <div class="loss-pill ${pingPillClass(losses[0])}" style="--h:${pingPillH(losses[0])}"><span class="lp-fill"></span></div>
-          <span class="loss-pill-label">联通</span>
-        </div>
-        <div class="loss-pill-cell">
-          <div class="loss-pill ${pingPillClass(losses[1])}" style="--h:${pingPillH(losses[1])}"><span class="lp-fill"></span></div>
-          <span class="loss-pill-label">电信</span>
-        </div>
-        <div class="loss-pill-cell">
-          <div class="loss-pill ${pingPillClass(losses[2])}" style="--h:${pingPillH(losses[2])}"><span class="lp-fill"></span></div>
-          <span class="loss-pill-label">移动</span>
-        </div>
-      </div>
     </div>
   </div>`;
 }
@@ -756,23 +741,6 @@ function updateServerCard(card, s, m){
     const newVal = pingAvg > 0 ? pingAvg + ' ms' : '–';
     if(sp && sp.textContent !== newVal) sp.textContent = newVal;
   }
-  if(infoRows[4]){
-    const sp = infoRows[4].querySelector('span:last-child');
-    const newVal = latencies.map(v => v === 0 ? '–' : v.toFixed(0)).join(' / ') + ' ms';
-    if(sp && sp.textContent !== newVal) sp.textContent = newVal;
-  }
-  // loss pills -- only if changed
-  const pills = card.querySelectorAll('.loss-pill');
-  const losses = pingValues(s);
-  const pingPillClass = (v) => v >= 40 ? 'bad' : v >= 30 ? 'warn' : 'ok';
-  const pingPillH = (v) => clamp(v / 100, 0, 1).toFixed(2);
-  losses.forEach((v, i) => {
-    if(!pills[i]) return;
-    const newClass = 'loss-pill ' + pingPillClass(v);
-    if(pills[i].className !== newClass) pills[i].className = newClass;
-    const newH = pingPillH(v);
-    if(pills[i].style.getPropertyValue('--h') !== newH) pills[i].style.setProperty('--h', newH);
-  });
   // class / data-online -- only if changed
   const newOnline = m.online ? 1 : 0;
   if(card.dataset.online !== String(newOnline)) card.dataset.online = newOnline;
