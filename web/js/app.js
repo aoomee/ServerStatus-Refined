@@ -421,10 +421,7 @@ function trafficCaps(s, small){
   return `<span class="caps-traffic duo ${heavy ? 'heavy' : 'normal'}${small ? ' sm' : ''}" title="本月下行 | 上行"><span class="half in">${humanMinMBFromB(m.monthIn)}</span><span class="half out">${humanMinMBFromB(m.monthOut)}</span></span>`;
 }
 function loadCellHTML(s){
-  const load = s.load_1 === -1 ? '–' : num(s.load_1).toFixed(2);
-  const cores = cpuCoreLabel(s);
-  if(!cores) return esc(load);
-  return `<span class="load-with-cores" title="负载 ${esc(load)} / CPU ${esc(cores)}"><span class="load-value">${esc(load)}</span><span class="load-core-bubble">${esc(cores)}</span></span>`;
+  return s.load_1 === -1 ? '–' : num(s.load_1).toFixed(2);
 }
 function gaugeHTML(type, value){
   const pct = clamp(num(value), 0, 100);
@@ -494,7 +491,7 @@ function serverRowSignature(s, m){
 }
 
 function serverRowHTML(s, m, signature){
-  const netNow = `${humanMinKBFromB(s.network_rx)} | ${humanMinKBFromB(s.network_tx)}`;
+  const netNow = `<span class="net-now">${humanMinKBFromB(s.network_rx)} | ${humanMinKBFromB(s.network_tx)}</span>`;
   const netTotal = `${humanMinMBFromB(s.network_in)} | ${humanMinMBFromB(s.network_out)}`;
   const alertClass = m.rowLevel ? ` alert-${m.rowLevel}` : '';
   return `<tr data-key="${esc(s._key)}" data-online="${m.online ? 1 : 0}" data-sig="${esc(signature)}" class="row-server${alertClass}${osClass(s.os)}" style="cursor:${m.online ? 'pointer' : 'default'};">

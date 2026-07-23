@@ -186,6 +186,7 @@ body.dark .pill.off{background:var(--red)}
 .virt-pill{display:inline-flex;align-items:center;justify-content:center;padding:2px 8px;border-radius:999px;font-size:11px;font-weight:600;background:var(--surface-hover);border:1px solid var(--border);color:var(--text-muted);line-height:1}
 .load-with-cores{display:inline-flex;align-items:center;justify-content:center;gap:.3rem;vertical-align:middle}
 .load-core-bubble{font-size:10px;padding:1px 5px;border-radius:999px;background:var(--surface-hover);border:1px solid var(--border);color:var(--text-muted);line-height:1;font-weight:600}
+.net-now{display:inline-block;min-width:120px;text-align:center;font-variant-numeric:tabular-nums}
 
 /* ── Traffic capsule ── */
 .caps-traffic{display:inline-flex;align-items:center;justify-content:center;gap:4px;background:var(--bg);border:1px solid var(--border);padding:2px 7px;border-radius:999px;font-size:11px;line-height:1;font-weight:600;font-variant-numeric:tabular-nums;vertical-align:middle}
