@@ -4,12 +4,8 @@ on:
   push:
     branches: [main]
 
-env:
-  REGISTRY: ghcr.io
-  IMAGE_NAME: ${{ github.repository }}
-
 jobs:
-  build:
+  build-server:
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -19,6 +15,12 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
       - name: Log in to GitHub Container Registry
         uses: docker/login-action@v3
         with:
@@ -26,15 +28,47 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Build and push
+      - name: Build and push server image
         uses: docker/build-push-action@v6
         with:
           context: .
           file: Dockerfile.server
           push: true
           tags: |
+            aoomee/serverstatus-refined:server
+            aoomee/serverstatus-refined:latest
+            ghcr.io/aoomee/serverstatus-refined:server
             ghcr.io/aoomee/serverstatus-refined:latest
-            ghcr.io/aoomee/serverstatus-refined:${{ github.sha }}
 
-      - name: 构建完成
-        run: echo "镜像已推送到 ghcr.io/aoomee/serverstatus-refined"
+  build-client:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Log in to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build and push client image
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: Dockerfile.client
+          push: true
+          tags: |
+            aoomee/serverstatus-refined:client
+            ghcr.io/aoomee/serverstatus-refined:client

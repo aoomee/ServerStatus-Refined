@@ -1,12 +1,13 @@
 services:
   serverstatus:
-    image: ghcr.io/aoomee/serverstatus-refined:latest
+    image: aoomee/serverstatus-refined:latest
     container_name: serverstatus-server
     restart: unless-stopped
     ports:
-      - "16888:80"
-      - "35601:35601"
+      - 8080:80
+      - 35601:35601
     volumes:
-      - ./data:/app/data
+      - ./server/config.json:/app/config/config.json
+      - ./web/json:/app/data
     environment:
-      - ADMIN_TOKEN=your-password-here
+      ADMIN_TOKEN: "${ADMIN_TOKEN:-}"
