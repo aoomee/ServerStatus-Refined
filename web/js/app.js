@@ -581,10 +581,22 @@ function renderServersCards(){
         <div class="info-row"><span>速率</span><span class="net-speed"><span class="up">${humanMinKBFromB(s.network_tx)} ↑</span><span class="down">${humanMinKBFromB(s.network_rx)} ↓</span></span></div>
         <div class="info-row"><span>在线</span><span>${esc(s.uptime || '-')}</span></div>
         <div class="info-row"><span>负载</span><span>${loadStr}</span></div>
-        <div class="info-row split"><span>延迟</span><span>${pingAvg} ms</span><span class="sep"></span><span>丢包</span><span>${lossStr}%</span></div>
+        <div class="info-row"><span>延迟</span><span>${pingAvg} ms</span></div>
+        <div class="info-row loss-row"><span>丢包</span><span>${lossStr}%</span></div>
       </div>
-      <div class="card-bottom">
-        <div class="ping-bar">${buckets(s)}</div>
+      <div class="card-loss-pills">
+        <div class="loss-pill-cell">
+          <div class="loss-pill ${losses[0] >= 60 ? 'bad' : losses[0] >= 30 ? 'warn' : 'ok'}" style="--h:${(losses[0]/100).toFixed(2)}"><span class="lp-fill"></span></div>
+          <span class="loss-pill-label">联通</span>
+        </div>
+        <div class="loss-pill-cell">
+          <div class="loss-pill ${losses[1] >= 60 ? 'bad' : losses[1] >= 30 ? 'warn' : 'ok'}" style="--h:${(losses[1]/100).toFixed(2)}"><span class="lp-fill"></span></div>
+          <span class="loss-pill-label">电信</span>
+        </div>
+        <div class="loss-pill-cell">
+          <div class="loss-pill ${losses[2] >= 60 ? 'bad' : losses[2] >= 30 ? 'warn' : 'ok'}" style="--h:${(losses[2]/100).toFixed(2)}"><span class="lp-fill"></span></div>
+          <span class="loss-pill-label">移动</span>
+        </div>
       </div>
     </div>`;
   }).join('') || '<div class="empty-state">无数据</div>';
