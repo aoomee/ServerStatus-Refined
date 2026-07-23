@@ -522,7 +522,6 @@ function serverRowHTML(s, m, structSig){
     <td>${m.online ? gaugeHTML('cpu', s.cpu) : '-'}</td>
     <td>${m.online ? gaugeHTML('mem', m.memPct) : '-'}</td>
     <td>${m.online ? gaugeHTML('hdd', m.hddPct) : '-'}</td>
-    <td>${buckets(s)}</td>
   </tr>`;
 }
 
@@ -576,19 +575,6 @@ function updateServerRow(row, s, m){
       } else gauge.removeAttribute('data-warn');
     }
   }
-  // td[12] buckets — update existing bucket styles
-  const bucketEls = tds[12].querySelectorAll('.bucket');
-  const pings = [s.ping_10010, s.ping_189, s.ping_10086];
-  pings.forEach((p, i) => {
-    if(!bucketEls[i]) return;
-    const v = clamp(num(p), 0, 100);
-    const h = v / 100;
-    const newH = h.toFixed(2);
-    const iEl = bucketEls[i].querySelector('i');
-    if(iEl && iEl.style.getPropertyValue('--h') !== newH) iEl.style.setProperty('--h', newH);
-    const level = v >= 40 ? 'bad' : v >= 30 ? 'warn' : 'ok';
-    if(bucketEls[i].dataset.lv !== level) bucketEls[i].dataset.lv = level;
-  });
   // class — only if changed
   const newOnline = m.online ? 1 : 0;
   if(row.dataset.online !== String(newOnline)) row.dataset.online = newOnline;
