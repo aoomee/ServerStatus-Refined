@@ -8,9 +8,9 @@
   --text:#000000;
   --text-muted:#6a7282;
   --text-dim:#99a1af;
-  --accent:#155dfc;
-  --accent-hover:#3080ff;
-  --accent-soft:#eff6ff;
+  --accent:hsl(30,14%,38%);
+  --accent-hover:hsl(30,14%,48%);
+  --accent-soft:hsl(40,18%,94%);
   --green:#16a34a;
   --green-soft:#f0fdf4;
   --red:#dc2626;
@@ -37,9 +37,9 @@ html.dark,body.dark{
   --text:#f1f5f9;
   --text-muted:#94a3b8;
   --text-dim:#475569;
-  --accent:#3080ff;
-  --accent-hover:#60a5fa;
-  --accent-soft:rgba(48,128,255,.12);
+  --accent:hsl(40,16%,82%);
+  --accent-hover:hsl(40,20%,90%);
+  --accent-soft:hsl(40,10%,22%);
   --green:#22c55e;
   --green-soft:rgba(34,197,94,.12);
   --red:#ef4444;
@@ -113,16 +113,16 @@ a:hover{color:var(--accent-hover)}
 .segmented button{height:36px;padding:0 .85rem;cursor:pointer;font-weight:500;color:var(--text-muted);border:1px solid var(--border);background:var(--surface);border-radius:var(--radius-sm);display:inline-flex;align-items:center;justify-content:center;line-height:1;transition:background-color .2s ease-out,border-color .2s ease-out,color .2s ease-out,box-shadow .2s ease-out,transform .15s ease-out}
 .segmented button:hover{background:var(--surface-hover);color:var(--text);border-color:var(--border-strong)}
 .segmented button.active{background:var(--accent-soft);color:var(--accent);border-color:var(--accent)}
-body.dark .segmented button.active{background:var(--accent-soft);color:var(--accent-hover);border-color:var(--accent-hover)}
+body.dark .segmented button.active{background:var(--accent-soft);color:var(--accent);border-color:var(--accent)}
 
 .icon-text.sort-dir{min-width:64px;display:inline-flex;align-items:center;justify-content:center}
 .icon-text.sort-dir:hover{background:var(--surface-hover);border-color:var(--border-strong)}
 .icon-text,.primary-btn,.warn-btn,.danger-btn{height:36px;border:1px solid var(--border);border-radius:var(--radius-sm);background:var(--surface);color:var(--text);padding:0 .75rem;cursor:pointer;transition:var(--trans);font-weight:500;font-size:14px;box-shadow:var(--shadow)}
 
 /* ── Custom select (rounded dropdown) ── */
-.custom-select{position:relative;display:flex;flex-direction:column;width:110px}
+.custom-select{position:relative;display:flex;flex-direction:column;width:150px}
 .custom-select select{position:absolute;opacity:0;pointer-events:none;width:1px;height:1px;padding:0;border:0}
-.custom-select .cs-trigger{height:36px;border:1px solid var(--border);background:var(--surface);color:var(--text);border-radius:var(--radius-sm);padding:0 2rem;outline:none;transition:background-color .2s ease-out,border-color .2s ease-out,box-shadow .2s ease-out;font-size:14px;display:flex;align-items:center;justify-content:center;cursor:pointer;white-space:nowrap;width:100%;line-height:1}
+.custom-select .cs-trigger{height:36px;border:1px solid var(--border);background:var(--surface);color:var(--text);border-radius:var(--radius-sm);padding:0 2rem;outline:none;transition:background-color .2s ease-out,border-color .2s ease-out,box-shadow .2s ease-out;font-size:14px;display:flex;align-items:center;justify-content:center;cursor:pointer;white-space:nowrap;width:100%;line-height:1;overflow:hidden;text-overflow:ellipsis}
 .custom-select .cs-trigger::after{content:'';position:absolute;right:.85rem;width:6px;height:6px;background:var(--text);border-radius:50%;opacity:.55;transition:none}
 .custom-select.open .cs-trigger::after{opacity:.9}
 .custom-select .cs-trigger:hover{border-color:var(--border-strong);background:var(--surface-hover)}
@@ -133,12 +133,12 @@ body.dark .segmented button.active{background:var(--accent-soft);color:var(--acc
 .custom-select .cs-option:last-child{border-bottom:none}
 .custom-select .cs-option:hover,.custom-select .cs-option:focus{background:var(--surface-hover)}
 .custom-select .cs-option.selected{background:var(--accent-soft);color:var(--accent)}
-body.dark .custom-select .cs-option.selected{background:var(--accent-soft);color:var(--accent-hover)}
+body.dark .custom-select .cs-option.selected{background:var(--accent-soft);color:var(--accent)}
 .icon-text:hover{border-color:var(--border-strong);background:var(--surface-hover)}
 .primary-btn{background:var(--accent);border-color:var(--accent);color:#fff}
 .primary-btn:hover{background:var(--accent-hover);border-color:var(--accent-hover)}
-body.dark .primary-btn{background:var(--accent);border-color:var(--accent);color:#fff}
-body.dark .primary-btn:hover{background:var(--accent-hover);border-color:var(--accent-hover)}
+body.dark .primary-btn{background:var(--accent);border-color:var(--accent);color:var(--accent-soft)}
+body.dark .primary-btn:hover{background:var(--accent-hover);border-color:var(--accent-hover);color:var(--accent-soft)}
 .warn-btn{background:var(--yellow-soft);border-color:var(--yellow-soft);color:var(--yellow)}
 body.dark .warn-btn{color:var(--yellow)}
 .danger-btn{background:var(--red-soft);border-color:var(--red-soft);color:var(--red)}
