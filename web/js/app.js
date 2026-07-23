@@ -184,8 +184,10 @@ function metrics(s){
   const lossWarning = online && !lossCritical && loss >= 30;
   const critical = online && (resourceCritical || blocked || lossCritical);
   const warning = online && (resourceWarning || lossWarning);
+  const alert = critical || warning;
+  const abnormal = online && !blocked && alert;
   const rowLevel = !online || critical ? 'critical' : (resourceWarning || lossWarning ? 'warning' : '');
-  return { online, memPct, hddPct, monthIn, monthOut, traffic, loss, lossBadCount, lossWarnCount, blocked, resourceCritical, resourceWarning, trafficWarning, lossCritical, lossWarning, critical, warning, alert: critical || warning, highlight: !!rowLevel, rowLevel };
+  return { online, memPct, hddPct, monthIn, monthOut, traffic, loss, lossBadCount, lossWarnCount, blocked, resourceCritical, resourceWarning, trafficWarning, lossCritical, lossWarning, critical, warning, alert, abnormal, highlight: !!rowLevel, rowLevel };
 }
 
 async function fetchData(){
@@ -235,7 +237,7 @@ function visibleServers(){
     const m = metrics(server);
     if(S.filters.status === 'online' && !m.online) return false;
     if(S.filters.status === 'offline' && m.online) return false;
-    if(S.filters.status === 'alert' && !m.alert) return false;
+    if(S.filters.status === 'alert' && !m.abnormal) return false;
     const os = osLabel(server.os);
     if(S.filters.os !== 'all' && os !== S.filters.os) return false;
     if(!q) return true;
@@ -358,7 +360,7 @@ function alertStats(){
     const m = metrics(s);
     if(!m.online) stats.offline++;
     else if(m.blocked) stats.blocked++;
-    else if(m.alert) stats.abnormal++;
+    else if(m.abnormal) stats.abnormal++;
   });
   stats.total = stats.offline + stats.abnormal + stats.blocked;
   return stats;
@@ -381,6 +383,7 @@ function renderOsOptions(){
   }
   if(select.value !== current) select.value = current;
   S.filters.os = select.value;
+  syncCustomSelect(select);
 }
 
 function protoPill(s){
@@ -881,7 +884,87 @@ function bindTheme(){
     if(S.openDetailKey) refreshDetail();
   });
 }
+function bindCustomSelect(select){
+  if(select._customBound) return;
+  select._customBound = true;
+  select.tabIndex = -1;
+  const wrapper = document.createElement('div');
+  wrapper.className = 'custom-select';
+  select.parentNode.insertBefore(wrapper, select);
+  wrapper.appendChild(select);
+
+  const trigger = document.createElement('button');
+  trigger.type = 'button';
+  trigger.className = 'cs-trigger';
+  trigger.id = select.id + '-custom-trigger';
+  trigger.setAttribute('aria-haspopup', 'listbox');
+  const label = document.querySelector(`label[for="${select.id}"]`);
+  if(label) label.htmlFor = trigger.id;
+
+  const dropdown = document.createElement('div');
+  dropdown.className = 'cs-dropdown';
+  dropdown.setAttribute('role', 'listbox');
+
+  wrapper.appendChild(trigger);
+  wrapper.appendChild(dropdown);
+
+  function sync(){
+    const opts = [...select.options];
+    const selected = opts.find(o => o.selected) || opts[0];
+    trigger.textContent = selected ? selected.text : '';
+    trigger.setAttribute('aria-expanded', String(wrapper.classList.contains('open')));
+    dropdown.innerHTML = opts.map(opt => `<div class="cs-option ${opt.selected ? 'selected' : ''}" role="option" aria-selected="${opt.selected}" data-value="${esc(opt.value)}">${esc(opt.text)}</div>`).join('');
+  }
+  select._customSync = sync;
+
+  function open(){
+    document.querySelectorAll('.custom-select.open').forEach(el => { if(el !== wrapper) el.classList.remove('open'); });
+    wrapper.classList.add('open');
+    trigger.setAttribute('aria-expanded', 'true');
+    const selected = dropdown.querySelector('.cs-option.selected');
+    if(selected) selected.scrollIntoView({ block: 'nearest' });
+  }
+  function close(){
+    wrapper.classList.remove('open');
+    trigger.setAttribute('aria-expanded', 'false');
+  }
+
+  trigger.addEventListener('click', e => { e.stopPropagation(); wrapper.classList.contains('open') ? close() : open(); });
+  dropdown.addEventListener('click', e => {
+    const opt = e.target.closest('.cs-option');
+    if(!opt) return;
+    select.value = opt.dataset.value;
+    select.dispatchEvent(new Event('change', { bubbles: true }));
+    sync();
+    close();
+  });
+  document.addEventListener('click', e => { if(!wrapper.contains(e.target)) close(); });
+  trigger.addEventListener('keydown', e => {
+    const opts = [...select.options];
+    let idx = opts.findIndex(o => o.selected);
+    if(e.key === 'ArrowDown'){ e.preventDefault(); idx = Math.min(idx + 1, opts.length - 1); }
+    else if(e.key === 'ArrowUp'){ e.preventDefault(); idx = Math.max(idx - 1, 0); }
+    else if(e.key === 'Enter' || e.key === ' '){ e.preventDefault(); if(!wrapper.classList.contains('open')){ open(); return; } }
+    else if(e.key === 'Escape'){ close(); return; }
+    else{ return; }
+    if(idx >= 0 && idx !== opts.findIndex(o => o.selected)){
+      select.value = opts[idx].value;
+      select.dispatchEvent(new Event('change', { bubbles: true }));
+      sync();
+    }
+    open();
+  });
+
+  const observer = new MutationObserver(sync);
+  observer.observe(select, { childList: true, subtree: true, attributes: true });
+  sync();
+}
+function syncCustomSelect(select){ if(select && typeof select._customSync === 'function') select._customSync(); }
+
 function bindFilters(){
+  bindCustomSelect($('osFilter'));
+  bindCustomSelect($('sortSelect'));
+
   $('serverSearch').addEventListener('input', e => { S.filters.query = e.target.value; scheduleServersRender(); });
   $('statusFilter').addEventListener('click', e => {
     if(e.target.tagName !== 'BUTTON') return;
@@ -901,6 +984,7 @@ function bindFilters(){
     if(S.filters.sort === th.dataset.sort) S.filters.dir = S.filters.dir === 'desc' ? 'asc' : 'desc';
     else S.filters.sort = th.dataset.sort;
     $('sortSelect').value = S.filters.sort;
+    syncCustomSelect($('sortSelect'));
     $('sortDirection').textContent = S.filters.dir === 'desc' ? '降序' : '升序';
     renderServersViewNow();
   }));
