@@ -183,7 +183,7 @@ body.dark .danger-btn{color:var(--red)}
 .card-loss-pills{display:flex;justify-content:center;align-items:flex-end;gap:.5rem;padding:.22rem 0 .05rem}
 .loss-pill-cell{display:flex;flex-direction:column;align-items:center;gap:.2rem}
 .loss-pill{position:relative;width:36px;height:14px;border-radius:999px;background:var(--surface-hover);border:1px solid var(--border);overflow:hidden;display:block}
-.loss-pill .lp-fill{position:absolute;left:0;right:0;bottom:0;height:calc(var(--h,0) * 100%);background:var(--green);border-radius:999px;transition:height .4s ease-out}
+.loss-pill .lp-fill{position:absolute;left:0;right:0;bottom:0;height:calc(var(--h,0) * 100%);background:var(--green);border-radius:999px}
 .loss-pill.ok .lp-fill{background:var(--green)}
 .loss-pill.warn .lp-fill{background:var(--orange)}
 .loss-pill.bad .lp-fill{background:var(--red)}
@@ -218,7 +218,7 @@ body.dark .danger-btn{color:var(--red)}
 .card-info .info-row .net-speed .down{color:var(--accent)}
 
 .cards .progress-bar{height:3px;border-radius:2px;background:var(--surface-hover);overflow:hidden;margin-top:2px}
-.cards .progress-bar i{display:block;height:100%;border-radius:2px;transition:width .4s ease-out}
+.cards .progress-bar i{display:block;height:100%;border-radius:2px}
 .cards .progress-bar.cpu i{background:var(--green)}
 .cards .progress-bar.mem i{background:var(--green)}
 .cards .progress-bar.hdd i{background:var(--green)}
@@ -281,7 +281,7 @@ body.dark .pill.off{background:var(--red)}
 /* ── Buckets ── */
 .buckets-wrap{display:inline-flex;align-items:center;justify-content:center;height:24px;vertical-align:middle;line-height:1;gap:4px}
 .buckets-wrap .bucket{display:inline-flex;align-items:flex-end;justify-content:center;width:14px;height:24px;background:var(--bg);border:1px solid var(--border);border-radius:999px;overflow:hidden;position:relative}
-.buckets-wrap .bucket i{display:block;width:100%;height:calc(var(--h,0)*100%);min-height:2px;background:var(--green);border-radius:999px;transition:height .3s ease-out}
+.buckets-wrap .bucket i{display:block;width:100%;height:calc(var(--h,0)*100%);min-height:2px;background:var(--green);border-radius:999px}
 .buckets-wrap .bucket[data-lv=warn] i{background:var(--yellow)}
 .buckets-wrap .bucket[data-lv=bad] i{background:var(--red)}
 
@@ -320,7 +320,7 @@ body.dark .modal-backdrop{background:rgba(0,0,0,.6)}
 .usage-row{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:1rem}
 .usage-item{display:flex;flex-direction:column;gap:3px;min-width:0;text-align:center;align-items:center}
 .usage-bar{display:block;height:3px;border-radius:2px;background:var(--surface-hover);overflow:hidden;margin-top:4px;width:100%}
-.usage-bar i{display:block;height:100%;border-radius:2px;transition:width .4s ease-out}
+.usage-bar i{display:block;height:100%;border-radius:2px}
 
 .title-chips .os-chip,.title-chips .spec-chip,.title-chips .cpu-model-chip{display:inline-flex;align-items:center;justify-content:center;height:20px;padding:0 7px;border-radius:999px;font-size:10px;font-weight:600;line-height:1;white-space:nowrap;border:1px solid var(--border);background:var(--surface-hover);color:var(--text-muted)}
 .title-chips .spec-chip{background:var(--surface-hover);color:var(--text);border-color:var(--border-strong)}

@@ -241,7 +241,7 @@ function visibleServers(){
     const m = metrics(server);
     if(S.filters.status === 'online' && !m.online) return false;
     if(S.filters.status === 'offline' && m.online) return false;
-    if(S.filters.status === 'alert' && !m.abnormal) return false;
+    if(S.filters.status === 'alert' && !m.alert) return false;
     const os = osLabel(server.os);
     if(S.filters.os !== 'all' && os !== S.filters.os) return false;
     if(!q) return true;
@@ -260,7 +260,7 @@ function visibleServers(){
       memory: m.memPct,
       hdd: m.hddPct,
       traffic: m.traffic,
-      loss: m.loss
+      loss: m.pingMax
     })[S.filters.sort];
     const va = value(a, ma), vb = value(b, mb);
     if(typeof va === 'string') return va.localeCompare(vb, 'zh-CN') * dir;
@@ -270,18 +270,20 @@ function visibleServers(){
 }
 
 function render(){
-  if(!S._firstRenderDone){
-    S._firstRenderDone = true;
-    const loader = $('loader');
-    const main = $('mainContent');
-    if(loader) loader.classList.add('loaded');
-    if(main) main.classList.add('revealed');
-    setTimeout(() => { if(loader) loader.style.display = 'none'; }, 350);
-  }
-  renderOverview();
-  renderActivePanel();
-  updateTime();
-  if(S.openDetailKey) refreshDetail();
+  requestAnimationFrame(() => {
+    if(!S._firstRenderDone){
+      S._firstRenderDone = true;
+      const loader = $('loader');
+      const main = $('mainContent');
+      if(loader) loader.classList.add('loaded');
+      if(main) main.classList.add('revealed');
+      setTimeout(() => { if(loader) loader.style.display = 'none'; }, 350);
+    }
+    renderOverview();
+    renderActivePanel();
+    updateTime();
+    if(S.openDetailKey) refreshDetail();
+  });
 }
 
 function renderActivePanel(){
@@ -348,15 +350,30 @@ function renderOverview(){
   const sslWarn = S.ssl.filter(c => c.mismatch || c.expire_days <= 7).length;
   const monthDown = S.servers.reduce((sum, s) => sum + metrics(s).monthIn, 0);
   const monthUp = S.servers.reduce((sum, s) => sum + metrics(s).monthOut, 0);
-  $('overviewCards').innerHTML = [
-    card('在线主机', `${online}/${total}`, '当前在线节点', online === total ? 'ok' : 'warn'),
-    card('本月上行', humanMinMBFromB(monthUp), '上传累计', 'traffic-up'),
-    card('本月下行', humanMinMBFromB(monthDown), '下载累计', 'traffic-down'),
-    card('证书风险', sslWarn, sslWarn ? '过期或域名不匹配' : '证书正常', sslWarn ? 'warn' : 'ok'),
-    card('活跃告警', alerts.total, `离线 ${alerts.offline} / 高载 ${alerts.abnormal} / 阻断 ${alerts.blocked}`, alerts.total ? (alerts.offline || alerts.blocked ? 'err' : 'warn') : 'ok')
-  ].join('');
+  const wrap = $('overviewCards');
+  const data = [
+    { label: '在线主机', value: `${online}/${total}`, hint: '当前在线节点', cls: online === total ? 'ok' : 'warn' },
+    { label: '本月上行', value: humanMinMBFromB(monthUp), hint: '上传累计', cls: 'traffic-up' },
+    { label: '本月下行', value: humanMinMBFromB(monthDown), hint: '下载累计', cls: 'traffic-down' },
+    { label: '证书风险', value: String(sslWarn), hint: sslWarn ? '过期或域名不匹配' : '证书正常', cls: sslWarn ? 'warn' : 'ok' },
+    { label: '活跃告警', value: String(alerts.total), hint: `离线 ${alerts.offline} / 高载 ${alerts.abnormal} / 阻断 ${alerts.blocked}`, cls: alerts.total ? (alerts.offline || alerts.blocked ? 'err' : 'warn') : 'ok' }
+  ];
+  const existing = wrap.querySelectorAll('.overview-card');
+  if(existing.length !== data.length){
+    wrap.innerHTML = data.map(d => `<div class="overview-card ${d.cls}"><span class="label">${esc(d.label)}</span><span class="value">${esc(d.value)}</span><span class="hint">${esc(d.hint)}</span></div>`).join('');
+    return;
+  }
+  data.forEach((d, i) => {
+    const el = existing[i];
+    const oldCls = el.className;
+    const newCls = `overview-card ${d.cls}`;
+    if(oldCls !== newCls) el.className = newCls;
+    const valueEl = el.querySelector('.value');
+    if(valueEl && valueEl.textContent !== d.value) valueEl.textContent = d.value;
+    const hintEl = el.querySelector('.hint');
+    if(hintEl && hintEl.textContent !== d.hint) hintEl.textContent = d.hint;
+  });
 }
-function card(label, value, hint, cls){ return `<div class="overview-card ${cls}"><span class="label">${esc(label)}</span><span class="value">${esc(value)}</span><span class="hint">${esc(hint)}</span></div>`; }
 
 function alertStats(){
   const stats = { offline: 0, abnormal: 0, blocked: 0, total: 0 };
@@ -487,22 +504,13 @@ function buckets(s){
   }).join('')}</span>`;
 }
 
-function serverRowSignature(s, m){
-  const text = [
-    m.online ? 1 : 0, m.rowLevel, s.online4, s.online6, s.os,
-    s.name, s.type, s.location, s.uptime, s.load_1, cpuCores(s),
-    s.network_rx, s.network_tx, s.network_in, s.network_out, s.last_network_in, s.last_network_out,
-    s.cpu, s.memory_used, s.memory_total, s.hdd_used, s.hdd_total,
-    s.ping_10010, s.ping_189, s.ping_10086
-  ].map(v => String(v ?? '')).join('\u001f');
-  return `${stableHash(text).toString(36)}:${text.length}`;
+function serverRowStructSig(s, m){
+  return [m.online ? 1 : 0, m.rowLevel, s.online4, s.online6, s.os, s.name, s.type, s.location].join('\u001f');
 }
 
-function serverRowHTML(s, m, signature){
-  const netNow = `<span class="net-now">${humanMinKBFromB(s.network_rx)} | ${humanMinKBFromB(s.network_tx)}</span>`;
-  const netTotal = `${humanMinMBFromB(s.network_in)} | ${humanMinMBFromB(s.network_out)}`;
+function serverRowHTML(s, m, structSig){
   const alertClass = m.rowLevel ? ` alert-${m.rowLevel}` : '';
-  return `<tr data-key="${esc(s._key)}" data-online="${m.online ? 1 : 0}" data-sig="${esc(signature)}" class="row-server${alertClass}${osClass(s.os)}" style="cursor:${m.online ? 'pointer' : 'default'};">
+  return `<tr data-key="${esc(s._key)}" data-online="${m.online ? 1 : 0}" data-struct="${esc(structSig)}" class="row-server${alertClass}${osClass(s.os)}" style="cursor:${m.online ? 'pointer' : 'default'};">
     <td>${protoSignal(s)}</td>
     <td>${trafficCaps(s)}</td>
     <td><span class="node-name" title="${esc(s.name || '-')}">${esc(s.name || '-')}</span></td>
@@ -510,13 +518,86 @@ function serverRowHTML(s, m, signature){
     <td>${esc(s.location || '-')}</td>
     <td>${esc(s.uptime || '-')}</td>
     <td>${loadCellHTML(s)}</td>
-    <td>${netNow}</td>
-    <td>${netTotal}</td>
+    <td><span class="net-now">${humanMinKBFromB(s.network_rx)} | ${humanMinKBFromB(s.network_tx)}</span></td>
+    <td>${humanMinMBFromB(s.network_in)} | ${humanMinMBFromB(s.network_out)}</td>
     <td>${m.online ? gaugeHTML('cpu', s.cpu) : '-'}</td>
     <td>${m.online ? gaugeHTML('mem', m.memPct) : '-'}</td>
     <td>${m.online ? gaugeHTML('hdd', m.hddPct) : '-'}</td>
     <td>${buckets(s)}</td>
   </tr>`;
+}
+
+function updateServerRow(row, s, m){
+  const tds = row.querySelectorAll('td');
+  // td[1] traffic — only update if content changed
+  const newTraffic = trafficCaps(s);
+  if(tds[1].innerHTML !== newTraffic) tds[1].innerHTML = newTraffic;
+  // td[5] uptime — textContent, only if changed
+  const newUptime = s.uptime || '-';
+  if(tds[5].textContent !== newUptime) tds[5].textContent = newUptime;
+  // td[6] load — simple text, only if changed
+  const newLoad = s.load_1 === -1 ? '–' : num(s.load_1).toFixed(2);
+  if(tds[6].textContent !== newLoad) tds[6].textContent = newLoad;
+  // td[7] netNow — update span text only
+  const netSpan = tds[7].querySelector('.net-now');
+  const newNet = `${humanMinKBFromB(s.network_rx)} | ${humanMinKBFromB(s.network_tx)}`;
+  if(netSpan && netSpan.textContent !== newNet) netSpan.textContent = newNet;
+  // td[8] netTotal — textContent, only if changed
+  const newNetTotal = `${humanMinMBFromB(s.network_in)} | ${humanMinMBFromB(s.network_out)}`;
+  if(tds[8].textContent !== newNetTotal) tds[8].textContent = newNetTotal;
+  // td[9-11] gauges — update existing gauge attributes
+  const gaugeTypes = ['cpu', 'mem', 'hdd'];
+  const gaugeValues = [s.cpu, m.memPct, m.hddPct];
+  const gaugeThresholds = {
+    cpu: { warn: 75, bad: 90 },
+    mem: { warn: 80, bad: 90 },
+    hdd: { warn: 85, bad: 90 }
+  };
+  for(let i = 0; i < 3; i++){
+    const td = tds[9 + i];
+    const gauge = td.querySelector('.gauge-half');
+    if(!m.online){
+      if(td.textContent !== '-') td.textContent = '-';
+    } else if(!gauge){
+      td.innerHTML = gaugeHTML(gaugeTypes[i], gaugeValues[i]);
+    } else {
+      const pct = clamp(num(gaugeValues[i]), 0, 100);
+      const th = gaugeThresholds[gaugeTypes[i]];
+      const newPctStr = (pct / 100).toFixed(3);
+      if(gauge.style.getPropertyValue('--p') !== newPctStr) gauge.style.setProperty('--p', newPctStr);
+      const span = gauge.querySelector('span');
+      const newLabel = pct.toFixed(0) + '%';
+      if(span.textContent !== newLabel) span.textContent = newLabel;
+      // data-bad / data-warn attributes
+      if(pct >= th.bad){
+        if(!gauge.hasAttribute('data-bad')) gauge.setAttribute('data-bad', '');
+      } else gauge.removeAttribute('data-bad');
+      if(pct >= th.warn && pct < th.bad){
+        if(!gauge.hasAttribute('data-warn')) gauge.setAttribute('data-warn', '');
+      } else gauge.removeAttribute('data-warn');
+    }
+  }
+  // td[12] buckets — update existing bucket styles
+  const bucketEls = tds[12].querySelectorAll('.bucket');
+  const pings = [s.ping_10010, s.ping_189, s.ping_10086];
+  pings.forEach((p, i) => {
+    if(!bucketEls[i]) return;
+    const v = num(p);
+    const h = v === 0 ? 1 : clamp(v / 200, 0, 1);
+    const newH = h.toFixed(2);
+    const iEl = bucketEls[i].querySelector('i');
+    if(iEl && iEl.style.getPropertyValue('--h') !== newH) iEl.style.setProperty('--h', newH);
+    const level = v === 0 || v >= 150 ? 'bad' : v >= 50 ? 'warn' : 'ok';
+    if(bucketEls[i].dataset.lv !== level) bucketEls[i].dataset.lv = level;
+  });
+  // class — only if changed
+  const newOnline = m.online ? 1 : 0;
+  if(row.dataset.online !== String(newOnline)) row.dataset.online = newOnline;
+  const alertClass = m.rowLevel ? ` alert-${m.rowLevel}` : '';
+  const newClass = `row-server${alertClass}${osClass(s.os)}`;
+  if(row.className !== newClass) row.className = newClass;
+  const newCursor = m.online ? 'pointer' : 'default';
+  if(row.style.cursor !== newCursor) row.style.cursor = newCursor;
 }
 
 function renderServers(){
@@ -541,75 +622,202 @@ function renderServers(){
   rows.forEach(s => {
     const key = String(s._key);
     const m = metrics(s);
-    const signature = serverRowSignature(s, m);
+    const structSig = serverRowStructSig(s, m);
     const current = existing.get(key);
-    let row = current;
-    if(!row || row.dataset.sig !== signature){
-      row = htmlElement(serverRowHTML(s, m, signature));
-      if(current) current.replaceWith(row);
+    if(!current){
+      const row = htmlElement(serverRowHTML(s, m, structSig));
+      tbody.appendChild(row);
+    } else if(current.dataset.struct !== structSig){
+      const row = htmlElement(serverRowHTML(s, m, structSig));
+      current.replaceWith(row);
+    } else {
+      updateServerRow(current, s, m);
     }
-    tbody.appendChild(row);
   });
+  // reorder only if needed
+  const currentOrder = [...tbody.querySelectorAll('tr.row-server')].map(r => r.dataset.key);
+  const desiredOrder = rows.map(s => String(s._key));
+  if(currentOrder.length === desiredOrder.length && currentOrder.some((k, i) => k !== desiredOrder[i])){
+    desiredOrder.forEach(key => {
+      const row = tbody.querySelector(`tr[data-key="${key}"]`);
+      if(row) tbody.appendChild(row);
+    });
+  }
+}
+
+function serverCardStructSig(s, m){
+  return [m.online ? 1 : 0, m.rowLevel, s.online4, s.online6, s.os, s.name, s.type, s.location].join('\u001f');
+}
+
+function serverCardHTML(s, m, structSig){
+  const alertClass = m.rowLevel ? ` alert-${m.rowLevel}` : '';
+  const spec = serverSpecLabel(s);
+  const cpuPct = num(s.cpu);
+  const cpuColor = cpuPct >= 90 ? 'bad' : cpuPct >= 75 ? 'warn' : 'cpu';
+  const memColor = m.memPct >= 90 ? 'bad' : m.memPct >= 80 ? 'warn' : 'mem';
+  const hddColor = m.hddPct >= 90 ? 'bad' : m.hddPct >= 85 ? 'warn' : 'hdd';
+  const loadStr = s.load_1 === -1 ? '–' : num(s.load_1).toFixed(2);
+  const pings = pingValues(s);
+  const pingStr = pings.map(v => v === 0 ? '–' : v.toFixed(0)).join(' / ');
+  const pingAvg = Math.round(pings.reduce((a,v) => a + (v > 0 ? v : 0), 0) / Math.max(1, pings.filter(v => v > 0).length));
+  const pingPillClass = (v) => v === 0 ? 'bad' : v >= 150 ? 'bad' : v >= 50 ? 'warn' : 'ok';
+  const pingPillH = (v) => v === 0 ? 1 : clamp(v / 200, 0, 1).toFixed(2);
+  return `<div class="card${m.online ? '' : ' offline'}${alertClass}${osClass(s.os)}" data-key="${esc(s._key)}" data-online="${m.online ? 1 : 0}" data-struct="${esc(structSig)}">
+    <div class="card-header"><div class="card-title">${esc(s.name || '-')}${spec ? `<span class="card-spec-chip" title="CPU 核心 / 总内存">${esc(spec)}</span>` : ''} <span class="tag">${esc(s.location || '-')}</span></div>${protoPill(s)}</div>
+    <div class="card-traffic">
+      <div class="traffic-label">月流量</div>
+      <div class="traffic-nums">
+        <span class="t-in">${humanMinMBFromB(m.monthIn)}</span>
+        <span class="t-sep">/</span>
+        <span class="t-out">${humanMinMBFromB(m.monthOut)}</span>
+      </div>
+    </div>
+    <div class="card-gauges">
+      <div class="gauge-item"><div class="gauge-circle ${cpuColor}" style="--p:${cpuPct/100}"><span>${cpuPct.toFixed(0)}%</span></div><span class="gauge-label">CPU</span></div>
+      <div class="gauge-item"><div class="gauge-circle ${memColor}" style="--p:${m.memPct/100}"><span>${m.memPct.toFixed(0)}%</span></div><span class="gauge-label">内存</span></div>
+      <div class="gauge-item"><div class="gauge-circle ${hddColor}" style="--p:${m.hddPct/100}"><span>${m.hddPct.toFixed(0)}%</span></div><span class="gauge-label">硬盘</span></div>
+    </div>
+    <div class="card-info">
+      <div class="info-row"><span>速率</span><span class="net-speed"><span class="up">${humanMinKBFromB(s.network_tx)} ↑</span><span class="down">${humanMinKBFromB(s.network_rx)} ↓</span></span></div>
+      <div class="info-row"><span>在线</span><span>${esc(s.uptime || '-')}</span></div>
+      <div class="info-row"><span>负载</span><span>${loadStr}</span></div>
+      <div class="info-row"><span>延迟</span><span>${pingAvg > 0 ? pingAvg + ' ms' : '–'}</span></div>
+      <div class="info-row loss-row"><span>三网</span><span>${pingStr} ms</span></div>
+      <div class="card-loss-pills">
+        <div class="loss-pill-cell">
+          <div class="loss-pill ${pingPillClass(pings[0])}" style="--h:${pingPillH(pings[0])}"><span class="lp-fill"></span></div>
+          <span class="loss-pill-label">联通</span>
+        </div>
+        <div class="loss-pill-cell">
+          <div class="loss-pill ${pingPillClass(pings[1])}" style="--h:${pingPillH(pings[1])}"><span class="lp-fill"></span></div>
+          <span class="loss-pill-label">电信</span>
+        </div>
+        <div class="loss-pill-cell">
+          <div class="loss-pill ${pingPillClass(pings[2])}" style="--h:${pingPillH(pings[2])}"><span class="lp-fill"></span></div>
+          <span class="loss-pill-label">移动</span>
+        </div>
+      </div>
+    </div>
+  </div>`;
+}
+
+function updateServerCard(card, s, m){
+  // traffic -- only if changed
+  const tIn = card.querySelector('.t-in');
+  const tOut = card.querySelector('.t-out');
+  const newIn = humanMinMBFromB(m.monthIn);
+  const newOut = humanMinMBFromB(m.monthOut);
+  if(tIn && tIn.textContent !== newIn) tIn.textContent = newIn;
+  if(tOut && tOut.textContent !== newOut) tOut.textContent = newOut;
+  // gauges -- only update changed attributes
+  const cpuPct = num(s.cpu);
+  const gaugeColors = [cpuPct >= 90 ? 'bad' : cpuPct >= 75 ? 'warn' : 'cpu', m.memPct >= 90 ? 'bad' : m.memPct >= 80 ? 'warn' : 'mem', m.hddPct >= 90 ? 'bad' : m.hddPct >= 85 ? 'warn' : 'hdd'];
+  const gaugePcts = [cpuPct, m.memPct, m.hddPct];
+  const gaugeItems = card.querySelectorAll('.gauge-item');
+  for(let i = 0; i < 3; i++){
+    if(!gaugeItems[i]) continue;
+    const gc = gaugeItems[i].querySelector('.gauge-circle');
+    if(!gc) continue;
+    const newClass = 'gauge-circle ' + gaugeColors[i];
+    if(gc.className !== newClass) gc.className = newClass;
+    const newP = gaugePcts[i] / 100;
+    if(gc.style.getPropertyValue('--p') !== String(newP)) gc.style.setProperty('--p', newP);
+    const span = gc.querySelector('span');
+    const newLabel = gaugePcts[i].toFixed(0) + '%';
+    if(span && span.textContent !== newLabel) span.textContent = newLabel;
+  }
+  // info rows -- only if changed
+  const infoRows = card.querySelectorAll('.card-info .info-row');
+  if(infoRows[0]){
+    const netSpeed = infoRows[0].querySelector('.net-speed');
+    if(netSpeed){
+      const upEl = netSpeed.querySelector('.up');
+      const downEl = netSpeed.querySelector('.down');
+      const newUp = humanMinKBFromB(s.network_tx) + ' ↑';
+      const newDown = humanMinKBFromB(s.network_rx) + ' ↓';
+      if(upEl && upEl.textContent !== newUp) upEl.textContent = newUp;
+      if(downEl && downEl.textContent !== newDown) downEl.textContent = newDown;
+    }
+  }
+  if(infoRows[1]){
+    const sp = infoRows[1].querySelector('span:last-child');
+    const newVal = s.uptime || '-';
+    if(sp && sp.textContent !== newVal) sp.textContent = newVal;
+  }
+  const loadStr = s.load_1 === -1 ? '–' : num(s.load_1).toFixed(2);
+  if(infoRows[2]){
+    const sp = infoRows[2].querySelector('span:last-child');
+    if(sp && sp.textContent !== loadStr) sp.textContent = loadStr;
+  }
+  const pings = pingValues(s);
+  const pingAvg = Math.round(pings.reduce((a,v) => a + (v > 0 ? v : 0), 0) / Math.max(1, pings.filter(v => v > 0).length));
+  if(infoRows[3]){
+    const sp = infoRows[3].querySelector('span:last-child');
+    const newVal = pingAvg > 0 ? pingAvg + ' ms' : '–';
+    if(sp && sp.textContent !== newVal) sp.textContent = newVal;
+  }
+  if(infoRows[4]){
+    const sp = infoRows[4].querySelector('span:last-child');
+    const newVal = pings.map(v => v === 0 ? '–' : v.toFixed(0)).join(' / ') + ' ms';
+    if(sp && sp.textContent !== newVal) sp.textContent = newVal;
+  }
+  // loss pills -- only if changed
+  const pills = card.querySelectorAll('.loss-pill');
+  const pingPillClass = (v) => v === 0 ? 'bad' : v >= 150 ? 'bad' : v >= 50 ? 'warn' : 'ok';
+  const pingPillH = (v) => v === 0 ? 1 : clamp(v / 200, 0, 1).toFixed(2);
+  pings.forEach((v, i) => {
+    if(!pills[i]) return;
+    const newClass = 'loss-pill ' + pingPillClass(v);
+    if(pills[i].className !== newClass) pills[i].className = newClass;
+    const newH = pingPillH(v);
+    if(pills[i].style.getPropertyValue('--h') !== newH) pills[i].style.setProperty('--h', newH);
+  });
+  // class / data-online -- only if changed
+  const newOnline = m.online ? 1 : 0;
+  if(card.dataset.online !== String(newOnline)) card.dataset.online = newOnline;
+  const alertClass = m.rowLevel ? ' alert-' + m.rowLevel : '';
+  const newClass = 'card' + (m.online ? '' : ' offline') + alertClass + osClass(s.os);
+  if(card.className !== newClass) card.className = newClass;
 }
 
 function renderServersCards(){
   const wrap = $('serversCards');
-  wrap.innerHTML = visibleServers().map(s => {
+  const rows = visibleServers();
+  if(!rows.length){
+    if(wrap.dataset.empty !== 'servers'){
+      wrap.innerHTML = '<div class="empty-state">无数据</div>';
+      wrap.dataset.empty = 'servers';
+    }
+    return;
+  }
+  delete wrap.dataset.empty;
+  const existing = new Map([...wrap.querySelectorAll('.card')].map(card => [card.dataset.key, card]));
+  const desiredKeys = new Set(rows.map(s => s._key));
+  existing.forEach((card, key) => { if(!desiredKeys.has(key)) card.remove(); });
+  rows.forEach(s => {
+    const key = String(s._key);
     const m = metrics(s);
-    const alertClass = m.rowLevel ? ` alert-${m.rowLevel}` : '';
-    const spec = serverSpecLabel(s);
-    const cpuPct = num(s.cpu);
-    const cpuColor = cpuPct >= 90 ? 'bad' : cpuPct >= 75 ? 'warn' : 'cpu';
-    const memColor = m.memPct >= 90 ? 'bad' : m.memPct >= 80 ? 'warn' : 'mem';
-    const hddColor = m.hddPct >= 90 ? 'bad' : m.hddPct >= 85 ? 'warn' : 'hdd';
-    const loadStr = s.load_1 === -1 ? '–' : num(s.load_1).toFixed(2);
-    const pings = pingValues(s);
-    const pingStr = pings.map(v => v === 0 ? '–' : v.toFixed(0)).join(' / ');
-    const memUsed = humanMinMBFromMB(s.memory_used);
-    const memTotal = humanMinMBFromMB(s.memory_total);
-    const hddUsed = humanMinMBFromMB(s.hdd_used);
-    const hddTotal = humanMinMBFromMB(s.hdd_total);
-    const pingAvg = Math.round(pings.reduce((a,v) => a + (v > 0 ? v : 0), 0) / Math.max(1, pings.filter(v => v > 0).length));
-    const pingPillClass = (v) => v === 0 ? 'bad' : v >= 150 ? 'bad' : v >= 50 ? 'warn' : 'ok';
-    const pingPillH = (v) => v === 0 ? 1 : clamp(v / 200, 0, 1).toFixed(2);
-    return `<div class="card${m.online ? '' : ' offline'}${alertClass}${osClass(s.os)}" data-key="${esc(s._key)}" data-online="${m.online ? 1 : 0}">
-      <div class="card-header"><div class="card-title">${esc(s.name || '-')}${spec ? `<span class="card-spec-chip" title="CPU 核心 / 总内存">${esc(spec)}</span>` : ''} <span class="tag">${esc(s.location || '-')}</span></div>${protoPill(s)}</div>
-      <div class="card-traffic">
-        <div class="traffic-label">月流量</div>
-        <div class="traffic-nums">
-          <span class="t-in">${humanMinMBFromB(m.monthIn)}</span>
-          <span class="t-sep">/</span>
-          <span class="t-out">${humanMinMBFromB(m.monthOut)}</span>
-        </div>
-      </div>
-      <div class="card-gauges">
-        <div class="gauge-item"><div class="gauge-circle ${cpuColor}" style="--p:${cpuPct/100}"><span>${cpuPct.toFixed(0)}%</span></div><span class="gauge-label">CPU</span></div>
-        <div class="gauge-item"><div class="gauge-circle ${memColor}" style="--p:${m.memPct/100}"><span>${m.memPct.toFixed(0)}%</span></div><span class="gauge-label">内存</span></div>
-        <div class="gauge-item"><div class="gauge-circle ${hddColor}" style="--p:${m.hddPct/100}"><span>${m.hddPct.toFixed(0)}%</span></div><span class="gauge-label">硬盘</span></div>
-      </div>
-      <div class="card-info">
-        <div class="info-row"><span>速率</span><span class="net-speed"><span class="up">${humanMinKBFromB(s.network_tx)} ↑</span><span class="down">${humanMinKBFromB(s.network_rx)} ↓</span></span></div>
-        <div class="info-row"><span>在线</span><span>${esc(s.uptime || '-')}</span></div>
-        <div class="info-row"><span>负载</span><span>${loadStr}</span></div>
-        <div class="info-row"><span>延迟</span><span>${pingAvg > 0 ? pingAvg + ' ms' : '–'}</span></div>
-        <div class="info-row loss-row"><span>三网</span><span>${pingStr} ms</span></div>
-        <div class="card-loss-pills">
-          <div class="loss-pill-cell">
-            <div class="loss-pill ${pingPillClass(pings[0])}" style="--h:${pingPillH(pings[0])}"><span class="lp-fill"></span></div>
-            <span class="loss-pill-label">联通</span>
-          </div>
-          <div class="loss-pill-cell">
-            <div class="loss-pill ${pingPillClass(pings[1])}" style="--h:${pingPillH(pings[1])}"><span class="lp-fill"></span></div>
-            <span class="loss-pill-label">电信</span>
-          </div>
-          <div class="loss-pill-cell">
-            <div class="loss-pill ${pingPillClass(pings[2])}" style="--h:${pingPillH(pings[2])}"><span class="lp-fill"></span></div>
-            <span class="loss-pill-label">移动</span>
-          </div>
-        </div>
-      </div>
-    </div>`;
-  }).join('') || '<div class="empty-state">无数据</div>';
+    const structSig = serverCardStructSig(s, m);
+    const current = existing.get(key);
+    if(!current){
+      const card = htmlElement(serverCardHTML(s, m, structSig));
+      wrap.appendChild(card);
+    } else if(current.dataset.struct !== structSig){
+      const card = htmlElement(serverCardHTML(s, m, structSig));
+      current.replaceWith(card);
+    } else {
+      updateServerCard(current, s, m);
+    }
+  });
+  // reorder only if needed
+  const currentOrder = [...wrap.querySelectorAll('.card')].map(c => c.dataset.key);
+  const desiredOrder = rows.map(s => String(s._key));
+  if(currentOrder.length === desiredOrder.length && currentOrder.some((k, i) => k !== desiredOrder[i])){
+    desiredOrder.forEach(key => {
+      const card = wrap.querySelector(`.card[data-key="${key}"]`);
+      if(card) wrap.appendChild(card);
+    });
+  }
 }
 
 function parseCustom(str){

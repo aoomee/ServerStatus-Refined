@@ -1,18 +1,12 @@
-version: '3'
-
 services:
   serverstatus:
     image: ghcr.io/aoomee/serverstatus-refined:latest
-    build:
-      context: .
-      dockerfile: Dockerfile.server
     container_name: serverstatus-server
     restart: unless-stopped
     ports:
-      - "16888:80"       # 外网端口，可以改
-      - "35601:35601"    # Agent 上报端口，不能改
+      - "16888:80"
+      - "35601:35601"
     volumes:
-      - ./server/config.json:/app/config/config.json
-      - ./web/json:/app/data
+      - ./data:/app/data
     environment:
-      - ADMIN_TOKEN=your-password-here   # 把这里改成你的密码
+      - ADMIN_TOKEN=your-password-here
