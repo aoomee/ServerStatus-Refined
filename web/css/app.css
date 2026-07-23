@@ -152,6 +152,19 @@ body.dark .danger-btn{color:var(--red)}
 .traffic-label{font-size:11px;color:var(--text-muted);font-weight:500;letter-spacing:.5px}
 .traffic-value{font-size:14px;font-weight:700}
 
+/* ── Card stats grid ── */
+.card-stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:.6rem;padding:.4rem 0}
+.stat-item{display:flex;flex-direction:column;align-items:center;gap:2px;text-align:center}
+.stat-item .stat-label{font-size:11px;color:var(--text-muted);font-weight:500}
+.stat-item .stat-value{font-size:13px;color:var(--text);font-weight:600;font-variant-numeric:tabular-nums}
+.stat-item .progress-bar{width:100%;margin-top:2px}
+
+/* ── Card info rows ── */
+.card-info{display:flex;flex-direction:column;gap:.3rem;padding:.4rem 0;border-top:1px solid var(--border);font-size:12px}
+.card-info .info-row{display:flex;justify-content:space-between;gap:.5rem}
+.card-info .info-row span:first-child{color:var(--text-muted)}
+.card-info .info-row span:last-child{color:var(--text);font-weight:600;font-variant-numeric:tabular-nums}
+
 .cards .progress-bar{height:3px;border-radius:2px;background:var(--surface-hover);overflow:hidden;margin-top:2px}
 .cards .progress-bar i{display:block;height:100%;border-radius:2px;transition:width .4s ease-out}
 .cards .progress-bar.cpu i{background:var(--green)}

@@ -555,23 +555,27 @@ function renderServersCards(){
     const memColor = m.memPct >= 90 ? 'bad' : m.memPct >= 80 ? 'warn' : 'mem';
     const hddColor = m.hddPct >= 90 ? 'bad' : m.hddPct >= 85 ? 'warn' : 'hdd';
     const netNow = `${humanMinKBFromB(s.network_rx)} ↓ ${humanMinKBFromB(s.network_tx)} ↑`;
+    const loadStr = s.load_1 === -1 ? '–' : num(s.load_1).toFixed(2);
+    const losses = lossValues(s);
+    const lossStr = losses.map(v => v.toFixed(0)).join(' / ');
     return `<div class="card${m.online ? '' : ' offline'}${alertClass}${osClass(s.os)}" data-key="${esc(s._key)}" data-online="${m.online ? 1 : 0}">
       <div class="card-header"><div class="card-title">${esc(s.name || '-')}${spec ? `<span class="card-spec-chip" title="CPU 核心 / 总内存">${esc(spec)}</span>` : ''} <span class="tag">${esc(s.location || '-')}</span></div>${protoPill(s)}</div>
       <div class="card-traffic">
         <div class="traffic-label">月流量</div>
         <div class="traffic-value">${trafficCaps(s)}</div>
       </div>
-      <div class="kvlist">
-        <div><span class="key">时长</span><span>${esc(s.uptime || '-')}</span></div>
-        <div><span class="key">网络</span><span class="net-now">${netNow}</span></div>
-        <div><span class="key">CPU</span><span>${cpuPct.toFixed(0)}%</span></div>
-        <div><span class="key">内存</span><span>${m.memPct.toFixed(0)}%</span></div>
-        <div class="progress-bar ${cpuColor}"><i style="width:${cpuPct.toFixed(1)}%"></i></div>
-        <div class="progress-bar ${memColor}"><i style="width:${m.memPct.toFixed(1)}%"></i></div>
+      <div class="card-stats">
+        <div class="stat-item"><span class="stat-label">CPU</span><span class="stat-value">${cpuPct.toFixed(0)}%</span><div class="progress-bar ${cpuColor}"><i style="width:${cpuPct.toFixed(1)}%"></i></div></div>
+        <div class="stat-item"><span class="stat-label">内存</span><span class="stat-value">${m.memPct.toFixed(0)}%</span><div class="progress-bar ${memColor}"><i style="width:${m.memPct.toFixed(1)}%"></i></div></div>
+        <div class="stat-item"><span class="stat-label">硬盘</span><span class="stat-value">${m.hddPct.toFixed(0)}%</span><div class="progress-bar ${hddColor}"><i style="width:${m.hddPct.toFixed(1)}%"></i></div></div>
+      </div>
+      <div class="card-info">
+        <div class="info-row"><span>负载</span><span>${loadStr}</span></div>
+        <div class="info-row"><span>网络</span><span class="net-now">${netNow}</span></div>
+        <div class="info-row"><span>丢包</span><span>${lossStr}%</span></div>
+        <div class="info-row"><span>时长</span><span>${esc(s.uptime || '-')}</span></div>
       </div>
       <div class="card-bottom">
-        <div class="info-row"><span>硬盘</span><span>${humanMinMBFromMB(s.hdd_used)} / ${humanMinMBFromMB(s.hdd_total)}</span></div>
-        <div class="progress-bar ${hddColor}"><i style="width:${m.hddPct.toFixed(1)}%"></i></div>
         <div class="info-row"><span>处理器</span><span>${esc(shortCpuModel(cpuModelLabel(s)) || s.host || '-')}</span></div>
       </div>
     </div>`;
