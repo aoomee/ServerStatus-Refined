@@ -165,6 +165,7 @@ table.data thead th.sorted-desc:after{content:" ▼";font-size:8px;color:var(--t
 table.data tbody td{padding:.75rem 1rem;border-bottom:1px solid var(--border);font-size:14px;line-height:1.5;vertical-align:middle;white-space:nowrap;color:var(--text);text-align:center}
 table.data tbody tr:last-child td{border-bottom:none}
 table.data tbody tr:hover{background:hsla(0,0%,96%,.5);transition:background .15s ease-out}
+body.dark table.data tbody tr:hover{background:rgba(148,163,184,.08)}
 table.data tbody tr.offline td{color:var(--text-dim)}
 table.data tbody tr.alert-critical td{background:var(--red-soft)}
 table.data tbody tr.alert-warning td{background:var(--yellow-soft)}
