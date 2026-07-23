@@ -54,7 +54,7 @@ services:
     volumes:
       - ./data:/app/data
     environment:
-      - ADMIN_TOKEN=VpsTest2026!
+      - ADMIN_TOKEN=your-password-here
 ```
 
 ```bash
