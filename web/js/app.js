@@ -554,7 +554,6 @@ function renderServersCards(){
     const cpuColor = cpuPct >= 90 ? 'bad' : cpuPct >= 75 ? 'warn' : 'cpu';
     const memColor = m.memPct >= 90 ? 'bad' : m.memPct >= 80 ? 'warn' : 'mem';
     const hddColor = m.hddPct >= 90 ? 'bad' : m.hddPct >= 85 ? 'warn' : 'hdd';
-    const netNow = `${humanMinKBFromB(s.network_rx)} ↓ ${humanMinKBFromB(s.network_tx)} ↑`;
     const loadStr = s.load_1 === -1 ? '–' : num(s.load_1).toFixed(2);
     const losses = lossValues(s);
     const lossStr = losses.map(v => v.toFixed(0)).join(' / ');
@@ -562,6 +561,7 @@ function renderServersCards(){
     const memTotal = humanMinMBFromMB(s.memory_total);
     const hddUsed = humanMinMBFromMB(s.hdd_used);
     const hddTotal = humanMinMBFromMB(s.hdd_total);
+    const pingAvg = Math.round((num(s.ping_10010) + num(s.ping_189) + num(s.ping_10086)) / 3);
     return `<div class="card${m.online ? '' : ' offline'}${alertClass}${osClass(s.os)}" data-key="${esc(s._key)}" data-online="${m.online ? 1 : 0}">
       <div class="card-header"><div class="card-title">${esc(s.name || '-')}${spec ? `<span class="card-spec-chip" title="CPU 核心 / 总内存">${esc(spec)}</span>` : ''} <span class="tag">${esc(s.location || '-')}</span></div>${protoPill(s)}</div>
       <div class="card-traffic">
@@ -578,13 +578,12 @@ function renderServersCards(){
         <div class="gauge-item"><div class="gauge-circle ${hddColor}" style="--p:${m.hddPct/100}"><span>${m.hddPct.toFixed(0)}%</span></div><span class="gauge-label">硬盘</span></div>
       </div>
       <div class="card-info">
+        <div class="info-row"><span>速率</span><span class="net-speed"><span class="up">${humanMinKBFromB(s.network_tx)} ↑</span><span class="down">${humanMinKBFromB(s.network_rx)} ↓</span></span></div>
+        <div class="info-row"><span>在线</span><span>${esc(s.uptime || '-')}</span></div>
         <div class="info-row"><span>负载</span><span>${loadStr}</span></div>
-        <div class="info-row"><span>网络</span><span class="net-now">${netNow}</span></div>
-        <div class="info-row"><span>丢包</span><span>${lossStr}%</span></div>
-        <div class="info-row"><span>时长</span><span>${esc(s.uptime || '-')}</span></div>
+        <div class="info-row"><span>延迟</span><span>${pingAvg} ms</span><span>丢包</span><span>${lossStr}%</span></div>
       </div>
       <div class="card-bottom">
-        <div class="info-row"><span>处理器</span><span>${esc(shortCpuModel(cpuModelLabel(s)) || s.host || '-')}</span></div>
         <div class="ping-bar">${buckets(s)}</div>
       </div>
     </div>`;

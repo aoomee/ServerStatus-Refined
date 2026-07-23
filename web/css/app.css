@@ -144,9 +144,7 @@ body.dark .danger-btn{color:var(--red)}
 .cards .kvlist span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 
 .cards .card-bottom{display:flex;flex-direction:column;gap:.2rem;padding-top:.3rem;border-top:1px solid var(--border);font-size:12px;color:var(--text-muted)}
-.cards .card-bottom .info-row{display:flex;justify-content:space-between;gap:.5rem}
-.cards .card-bottom .info-row span:last-child{color:var(--text);font-family:var(--mono);font-size:12px;font-weight:600}
-.ping-bar{display:flex;justify-content:center;padding-top:.2rem}
+.ping-bar{display:flex;justify-content:center;padding-top:.1rem}
 
 /* ── Card traffic highlight ── */
 .card-traffic{display:flex;flex-direction:column;align-items:center;gap:.1rem;padding:.3rem 0;border-bottom:1px solid var(--border)}
@@ -167,10 +165,13 @@ body.dark .danger-btn{color:var(--red)}
 .gauge-label{font-size:11px;color:var(--text-muted);font-weight:500}
 
 /* ── Card info rows ── */
-.card-info{display:flex;flex-direction:column;gap:.2rem;padding:.3rem 0;border-top:1px solid var(--border);font-size:12px}
-.card-info .info-row{display:flex;justify-content:space-between;gap:.5rem}
-.card-info .info-row span:first-child{color:var(--text-muted)}
+.card-info{display:flex;flex-direction:column;gap:.25rem;padding:.3rem 0;border-top:1px solid var(--border);font-size:12px}
+.card-info .info-row{display:flex;justify-content:space-between;gap:.5rem;align-items:center}
+.card-info .info-row span:first-child{color:var(--text-muted);flex-shrink:0}
 .card-info .info-row span:last-child{color:var(--text);font-weight:600;font-variant-numeric:tabular-nums}
+.card-info .info-row .net-speed{display:flex;gap:.8rem;font-variant-numeric:tabular-nums}
+.card-info .info-row .net-speed .up{color:var(--green)}
+.card-info .info-row .net-speed .down{color:var(--accent)}
 
 .cards .progress-bar{height:3px;border-radius:2px;background:var(--surface-hover);overflow:hidden;margin-top:2px}
 .cards .progress-bar i{display:block;height:100%;border-radius:2px;transition:width .4s ease-out}
