@@ -104,7 +104,7 @@ a:hover{color:var(--accent-hover)}
 .toolbar-group input:hover,.toolbar-group select:hover,.toolbar-group .icon-text:hover{border-color:var(--border-strong)}
 
 .segmented{display:inline-flex;gap:.35rem;background:transparent;border:none;border-radius:0}
-.segmented button{padding:0 .85rem;cursor:pointer;font-weight:500;color:var(--text-muted);border-color:var(--border);display:inline-flex;align-items:center;justify-content:center;line-height:1}
+.segmented button{height:36px;padding:0 .85rem;cursor:pointer;font-weight:500;color:var(--text-muted);border:1px solid var(--border);background:var(--surface);border-radius:var(--radius-sm);display:inline-flex;align-items:center;justify-content:center;line-height:1;transition:background-color .2s ease-out,border-color .2s ease-out,color .2s ease-out,box-shadow .2s ease-out,transform .15s ease-out}
 .segmented button:hover{background:var(--surface-hover);color:var(--text);border-color:var(--border-strong)}
 .segmented button.active{background:var(--text);color:var(--surface);border-color:var(--text)}
 body.dark .segmented button.active{background:var(--text);color:var(--bg);border-color:var(--text)}
@@ -339,6 +339,10 @@ body.dark .modal-backdrop{background:rgba(0,0,0,.6)}
 .admin-status.ok{border-color:var(--green-soft);color:var(--green);background:var(--green-soft)}
 .admin-status.err{border-color:var(--red-soft);color:var(--red);background:var(--red-soft)}
 .admin-login,.config-actions,.form-actions{display:flex;align-items:end;gap:.5rem;flex-wrap:wrap}
+.admin-login .search-field{display:flex;align-items:center;gap:.5rem;color:var(--text);font-size:14px;font-weight:500}
+.admin-login input#adminToken{height:36px;border:1px solid var(--border);background:var(--bg);color:var(--text);border-radius:var(--radius-sm);padding:0 .75rem;outline:none;transition:var(--trans);font-size:14px;min-width:180px}
+.admin-login input#adminToken:focus{border-color:var(--text);box-shadow:0 0 0 1px var(--text)}
+.admin-login input#adminToken::placeholder{color:var(--text-dim)}
 .config-tabs{align-self:flex-start}
 .config-list{display:flex;flex-direction:column;gap:.4rem}
 .config-row{display:grid;grid-template-columns:1fr auto;gap:.6rem;align-items:center;border:1px solid var(--border);border-radius:var(--radius-sm);background:var(--bg);padding:.6rem;cursor:pointer;transition:var(--trans)}
