@@ -585,6 +585,7 @@ function renderServersCards(){
       </div>
       <div class="card-bottom">
         <div class="info-row"><span>处理器</span><span>${esc(shortCpuModel(cpuModelLabel(s)) || s.host || '-')}</span></div>
+        <div class="ping-bar">${buckets(s)}</div>
       </div>
     </div>`;
   }).join('') || '<div class="empty-state">无数据</div>';
