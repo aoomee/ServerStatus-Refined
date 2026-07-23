@@ -120,7 +120,7 @@ body.dark .segmented button.active{background:var(--accent-soft);color:var(--acc
 .icon-text,.primary-btn,.warn-btn,.danger-btn{height:36px;border:1px solid var(--border);border-radius:var(--radius-sm);background:var(--surface);color:var(--text);padding:0 .75rem;cursor:pointer;transition:var(--trans);font-weight:500;font-size:14px;box-shadow:var(--shadow)}
 
 /* ── Custom select (rounded dropdown) ── */
-.custom-select{position:relative;display:flex;flex-direction:column;min-width:110px}
+.custom-select{position:relative;display:flex;flex-direction:column;width:110px}
 .custom-select select{position:absolute;opacity:0;pointer-events:none;width:1px;height:1px;padding:0;border:0}
 .custom-select .cs-trigger{height:36px;border:1px solid var(--border);background:var(--surface);color:var(--text);border-radius:var(--radius-sm);padding:0 2rem;outline:none;transition:background-color .2s ease-out,border-color .2s ease-out,box-shadow .2s ease-out;font-size:14px;display:flex;align-items:center;justify-content:center;cursor:pointer;white-space:nowrap;width:100%;line-height:1}
 .custom-select .cs-trigger::after{content:'';position:absolute;right:.85rem;width:6px;height:6px;background:var(--text);border-radius:50%;opacity:.55;transition:none}
