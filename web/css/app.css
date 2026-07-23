@@ -94,15 +94,15 @@ a:hover{color:var(--accent-hover)}
 
 /* ── Toolbar ── */
 .ops-toolbar{display:flex;align-items:stretch;justify-content:center;gap:.75rem;flex-wrap:wrap;background:var(--surface);border-radius:calc(var(--radius) - 2px);padding:.75rem 1rem;box-shadow:0 4px 6px -1px rgba(0,0,0,.06),0 0 0 1px var(--border)}
-.toolbar-group{display:flex;flex-direction:column;gap:.25rem;justify-content:flex-end}
-.toolbar-group label,.toolbar-group .toolbar-label{display:block;color:var(--text-muted);font-size:11px;font-weight:500;line-height:1.2;min-height:14px}
-.toolbar-group input,.toolbar-group select,.toolbar-group .icon-text,.toolbar-group .segmented button{height:36px;border:1px solid var(--border);background:var(--surface);color:var(--text);border-radius:var(--radius-sm);padding:0 .75rem;outline:none;transition:background-color .2s ease-out,border-color .2s ease-out,color .2s ease-out,box-shadow .2s ease-out,transform .15s ease-out;font-size:14px}
-.toolbar-group input{min-width:220px}
+.toolbar-group{display:flex;flex-direction:column;gap:.3rem;justify-content:flex-end;align-items:center}
+.toolbar-group label,.toolbar-group .toolbar-label{display:block;color:var(--text-muted);font-size:11px;font-weight:500;line-height:1.2;text-align:center;width:100%}
+.toolbar-group input,.toolbar-group select,.toolbar-group .icon-text,.toolbar-group .segmented button{height:36px;border:1px solid var(--border);background:var(--surface);color:var(--text);border-radius:var(--radius-sm);padding:0 .75rem;outline:none;transition:background-color .2s ease-out,border-color .2s ease-out,color .2s ease-out,box-shadow .2s ease-out,transform .15s ease-out;font-size:14px;display:flex;align-items:center;justify-content:center;line-height:1}
+.toolbar-group input{min-width:220px;justify-content:flex-start;text-align:center}
 .toolbar-group input:focus,.toolbar-group select:focus,.toolbar-group .icon-text:focus,.toolbar-group .segmented button:focus{border-color:var(--text);box-shadow:0 0 0 1px var(--text)}
 .toolbar-group input:hover,.toolbar-group select:hover,.toolbar-group .icon-text:hover{border-color:var(--border-strong)}
 
 .segmented{display:inline-flex;gap:.35rem;background:transparent;border:none;border-radius:0}
-.segmented button{padding:0 .85rem;cursor:pointer;font-weight:500;color:var(--text-muted);border-color:var(--border)}
+.segmented button{padding:0 .85rem;cursor:pointer;font-weight:500;color:var(--text-muted);border-color:var(--border);display:inline-flex;align-items:center;justify-content:center;line-height:1}
 .segmented button:hover{background:var(--surface-hover);color:var(--text);border-color:var(--border-strong)}
 .segmented button.active{background:var(--text);color:var(--surface);border-color:var(--text)}
 body.dark .segmented button.active{background:var(--text);color:var(--bg);border-color:var(--text)}
@@ -114,14 +114,14 @@ body.dark .segmented button.active{background:var(--text);color:var(--bg);border
 /* ── Custom select (rounded dropdown) ── */
 .custom-select{position:relative;display:flex;flex-direction:column;min-width:110px}
 .custom-select select{position:absolute;opacity:0;pointer-events:none;width:1px;height:1px;padding:0;border:0}
-.custom-select .cs-trigger{height:36px;border:1px solid var(--border);background:var(--surface);color:var(--text);border-radius:var(--radius-sm);padding:0 2rem 0 .75rem;outline:none;transition:background-color .2s ease-out,border-color .2s ease-out,box-shadow .2s ease-out;font-size:14px;display:flex;align-items:center;cursor:pointer;white-space:nowrap;text-align:left;width:100%}
+.custom-select .cs-trigger{height:36px;border:1px solid var(--border);background:var(--surface);color:var(--text);border-radius:var(--radius-sm);padding:0 2rem 0 .75rem;outline:none;transition:background-color .2s ease-out,border-color .2s ease-out,box-shadow .2s ease-out;font-size:14px;display:flex;align-items:center;justify-content:center;cursor:pointer;white-space:nowrap;width:100%;line-height:1}
 .custom-select .cs-trigger::after{content:'';position:absolute;right:.85rem;width:7px;height:7px;border-right:1.5px solid currentColor;border-bottom:1.5px solid currentColor;transform:rotate(45deg) translateY(-2px);transition:transform .2s ease-out;opacity:.55}
 .custom-select.open .cs-trigger::after{transform:rotate(-135deg) translateY(2px)}
 .custom-select .cs-trigger:hover{border-color:var(--border-strong);background:var(--surface-hover)}
 .custom-select.open .cs-trigger{border-color:var(--text);box-shadow:0 0 0 1px var(--text)}
 .custom-select .cs-dropdown{position:absolute;top:calc(100% + 4px);left:0;min-width:100%;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);box-shadow:var(--shadow-md);opacity:0;transform:translateY(-4px);pointer-events:none;transition:opacity .2s ease-out,transform .2s ease-out;z-index:30;overflow:hidden;max-height:260px;overflow-y:auto}
 .custom-select.open .cs-dropdown{opacity:1;transform:translateY(0);pointer-events:auto}
-.custom-select .cs-option{padding:.55rem .75rem;cursor:pointer;transition:background-color .15s ease-out,color .15s ease-out;font-size:14px;color:var(--text);border-bottom:1px solid var(--border);white-space:nowrap}
+.custom-select .cs-option{padding:.55rem .75rem;cursor:pointer;transition:background-color .15s ease-out,color .15s ease-out;font-size:14px;color:var(--text);border-bottom:1px solid var(--border);white-space:nowrap;display:flex;align-items:center;justify-content:center;line-height:1}
 .custom-select .cs-option:last-child{border-bottom:none}
 .custom-select .cs-option:hover,.custom-select .cs-option:focus{background:var(--surface-hover)}
 .custom-select .cs-option.selected{background:var(--text);color:var(--surface)}
