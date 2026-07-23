@@ -162,7 +162,7 @@ function osLabel(os){
 }
 
 function pingValues(s){
-  return [s.ping_10010, s.ping_189, s.ping_10086].map(p => num(p));
+  return [s.time_10010, s.time_189, s.time_10086].map(p => num(p));
 }
 
 function metrics(s){
