@@ -643,8 +643,6 @@ function serverCardHTML(s, m, structSig){
   const hddColor = m.hddPct >= 90 ? 'bad' : m.hddPct >= 85 ? 'warn' : 'hdd';
   const loadStr = s.load_1 === -1 ? '–' : num(s.load_1).toFixed(2);
   const latencies = [s.time_10010, s.time_189, s.time_10086].map(p => num(p));
-  const pingStr = latencies.map(v => v === 0 ? '–' : v.toFixed(0)).join(' / ');
-  const pingAvg = Math.round(latencies.reduce((a,v) => a + (v > 0 ? v : 0), 0) / Math.max(1, latencies.filter(v => v > 0).length));
   const losses = pingValues(s);
   const pingPillClass = (v) => v >= 40 ? 'bad' : v >= 30 ? 'warn' : 'ok';
   const pingPillH = (v) => clamp(v / 100, 0, 1).toFixed(2);
@@ -667,7 +665,7 @@ function serverCardHTML(s, m, structSig){
       <div class="info-row"><span>速率</span><span class="net-speed"><span class="up">${humanMinKBFromB(s.network_tx)} ↑</span><span class="down">${humanMinKBFromB(s.network_rx)} ↓</span></span></div>
       <div class="info-row"><span>在线</span><span>${esc(s.uptime || '-')}</span></div>
       <div class="info-row"><span>负载</span><span>${loadStr}</span></div>
-      <div class="info-row"><span>延迟</span><span>${pingAvg > 0 ? pingAvg + ' ms' : '–'}</span></div>
+      <div class="info-row"><span>三网延迟</span><span>联通 ${latencies[0] > 0 ? latencies[0] + 'ms' : '–'} | 电信 ${latencies[1] > 0 ? latencies[1] + 'ms' : '–'} | 移动 ${latencies[2] > 0 ? latencies[2] + 'ms' : '–'}</span></div>
     </div>
   </div>`;
 }
@@ -721,10 +719,9 @@ function updateServerCard(card, s, m){
     if(sp && sp.textContent !== loadStr) sp.textContent = loadStr;
   }
   const latencies = [s.time_10010, s.time_189, s.time_10086].map(p => num(p));
-  const pingAvg = Math.round(latencies.reduce((a,v) => a + (v > 0 ? v : 0), 0) / Math.max(1, latencies.filter(v => v > 0).length));
   if(infoRows[3]){
     const sp = infoRows[3].querySelector('span:last-child');
-    const newVal = pingAvg > 0 ? pingAvg + ' ms' : '–';
+    const newVal = `联通 ${latencies[0] > 0 ? latencies[0] + 'ms' : '–'} | 电信 ${latencies[1] > 0 ? latencies[1] + 'ms' : '–'} | 移动 ${latencies[2] > 0 ? latencies[2] + 'ms' : '–'}`;
     if(sp && sp.textContent !== newVal) sp.textContent = newVal;
   }
   // class / data-online -- only if changed
