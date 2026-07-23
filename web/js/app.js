@@ -162,7 +162,7 @@ function osLabel(os){
 }
 
 function pingValues(s){
-  return [s.time_10010, s.time_189, s.time_10086].map(p => num(p));
+  return [s.ping_10010, s.ping_189, s.ping_10086].map(p => num(p));
 }
 
 function metrics(s){
@@ -173,22 +173,21 @@ function metrics(s){
   const monthOut = Math.max(0, num(s.network_out) - num(s.last_network_out));
   const traffic = monthIn + monthOut;
   const pings = pingValues(s);
-  const pingMax = Math.max(...pings);
-  const pingUnreachable = online && pings.some(p => p === 0);
-  const pingSlow = online && pings.filter(p => p > 0 && p >= 150).length;
-  const pingModerate = online && pings.filter(p => p > 0 && p >= 50 && p < 150).length;
-  const blocked = online && pings.every(p => p === 0);
+  const loss = Math.max(...pings);
+  const lossBadCount = pings.filter(p => p >= 40).length;
+  const lossWarnCount = pings.filter(p => p >= 30).length;
+  const blocked = online && pings.every(p => p >= 100);
   const resourceCritical = online && (num(s.cpu) >= 90 || memPct >= 90 || hddPct >= 90);
   const resourceWarning = online && (num(s.cpu) >= 75 || memPct >= 80 || hddPct >= 85);
   const trafficWarning = online && traffic >= 1000 * 1000 * 1000 * 1000;
-  const pingCritical = online && (pingUnreachable || pingSlow >= 2);
-  const pingWarning = online && !pingCritical && (pingModerate >= 2 || pingSlow >= 1);
-  const critical = online && (resourceCritical || blocked || pingCritical);
-  const warning = online && (resourceWarning || pingWarning);
+  const lossCritical = online && loss >= 40;
+  const lossWarning = online && !lossCritical && loss >= 30;
+  const critical = online && (resourceCritical || blocked || lossCritical);
+  const warning = online && (resourceWarning || lossWarning);
   const alert = critical || warning;
   const abnormal = online && !blocked && alert;
-  const rowLevel = !online || critical ? 'critical' : (resourceWarning || pingWarning ? 'warning' : '');
-  return { online, memPct, hddPct, monthIn, monthOut, traffic, pings, pingMax, blocked, resourceCritical, resourceWarning, trafficWarning, pingCritical, pingWarning, critical, warning, alert, abnormal, highlight: !!rowLevel, rowLevel };
+  const rowLevel = !online || critical ? 'critical' : (resourceWarning || lossWarning ? 'warning' : '');
+  return { online, memPct, hddPct, monthIn, monthOut, traffic, loss, lossBadCount, lossWarnCount, blocked, resourceCritical, resourceWarning, trafficWarning, lossCritical, lossWarning, critical, warning, alert, abnormal, highlight: !!rowLevel, rowLevel };
 }
 
 async function fetchData(){
@@ -260,7 +259,7 @@ function visibleServers(){
       memory: m.memPct,
       hdd: m.hddPct,
       traffic: m.traffic,
-      loss: m.pingMax
+      loss: m.loss
     })[S.filters.sort];
     const va = value(a, ma), vb = value(b, mb);
     if(typeof va === 'string') return va.localeCompare(vb, 'zh-CN') * dir;
@@ -497,9 +496,9 @@ function chartLegend(series){
 }
 function buckets(s){
   return `<span class="buckets-wrap" title="联通 / 电信 / 移动">${[s.ping_10010, s.ping_189, s.ping_10086].map(p => {
-    const v = num(p);
-    const h = v === 0 ? 1 : clamp(v / 200, 0, 1);
-    const level = v === 0 || v >= 150 ? 'bad' : v >= 50 ? 'warn' : 'ok';
+    const v = clamp(num(p), 0, 100);
+    const h = v / 100;
+    const level = v >= 40 ? 'bad' : v >= 30 ? 'warn' : 'ok';
     return `<span class="bucket" data-lv="${level}"><i style="--h:${h.toFixed(2)}"></i></span>`;
   }).join('')}</span>`;
 }
@@ -582,12 +581,12 @@ function updateServerRow(row, s, m){
   const pings = [s.ping_10010, s.ping_189, s.ping_10086];
   pings.forEach((p, i) => {
     if(!bucketEls[i]) return;
-    const v = num(p);
-    const h = v === 0 ? 1 : clamp(v / 200, 0, 1);
+    const v = clamp(num(p), 0, 100);
+    const h = v / 100;
     const newH = h.toFixed(2);
     const iEl = bucketEls[i].querySelector('i');
     if(iEl && iEl.style.getPropertyValue('--h') !== newH) iEl.style.setProperty('--h', newH);
-    const level = v === 0 || v >= 150 ? 'bad' : v >= 50 ? 'warn' : 'ok';
+    const level = v >= 40 ? 'bad' : v >= 30 ? 'warn' : 'ok';
     if(bucketEls[i].dataset.lv !== level) bucketEls[i].dataset.lv = level;
   });
   // class — only if changed
@@ -657,11 +656,12 @@ function serverCardHTML(s, m, structSig){
   const memColor = m.memPct >= 90 ? 'bad' : m.memPct >= 80 ? 'warn' : 'mem';
   const hddColor = m.hddPct >= 90 ? 'bad' : m.hddPct >= 85 ? 'warn' : 'hdd';
   const loadStr = s.load_1 === -1 ? '–' : num(s.load_1).toFixed(2);
-  const pings = pingValues(s);
-  const pingStr = pings.map(v => v === 0 ? '–' : v.toFixed(0)).join(' / ');
-  const pingAvg = Math.round(pings.reduce((a,v) => a + (v > 0 ? v : 0), 0) / Math.max(1, pings.filter(v => v > 0).length));
-  const pingPillClass = (v) => v === 0 ? 'bad' : v >= 150 ? 'bad' : v >= 50 ? 'warn' : 'ok';
-  const pingPillH = (v) => v === 0 ? 1 : clamp(v / 200, 0, 1).toFixed(2);
+  const latencies = [s.time_10010, s.time_189, s.time_10086].map(p => num(p));
+  const pingStr = latencies.map(v => v === 0 ? '–' : v.toFixed(0)).join(' / ');
+  const pingAvg = Math.round(latencies.reduce((a,v) => a + (v > 0 ? v : 0), 0) / Math.max(1, latencies.filter(v => v > 0).length));
+  const losses = pingValues(s);
+  const pingPillClass = (v) => v >= 40 ? 'bad' : v >= 30 ? 'warn' : 'ok';
+  const pingPillH = (v) => clamp(v / 100, 0, 1).toFixed(2);
   return `<div class="card${m.online ? '' : ' offline'}${alertClass}${osClass(s.os)}" data-key="${esc(s._key)}" data-online="${m.online ? 1 : 0}" data-struct="${esc(structSig)}">
     <div class="card-header"><div class="card-title">${esc(s.name || '-')}${spec ? `<span class="card-spec-chip" title="CPU 核心 / 总内存">${esc(spec)}</span>` : ''} <span class="tag">${esc(s.location || '-')}</span></div>${protoPill(s)}</div>
     <div class="card-traffic">
@@ -685,15 +685,15 @@ function serverCardHTML(s, m, structSig){
       <div class="info-row loss-row"><span>三网</span><span>${pingStr} ms</span></div>
       <div class="card-loss-pills">
         <div class="loss-pill-cell">
-          <div class="loss-pill ${pingPillClass(pings[0])}" style="--h:${pingPillH(pings[0])}"><span class="lp-fill"></span></div>
+          <div class="loss-pill ${pingPillClass(losses[0])}" style="--h:${pingPillH(losses[0])}"><span class="lp-fill"></span></div>
           <span class="loss-pill-label">联通</span>
         </div>
         <div class="loss-pill-cell">
-          <div class="loss-pill ${pingPillClass(pings[1])}" style="--h:${pingPillH(pings[1])}"><span class="lp-fill"></span></div>
+          <div class="loss-pill ${pingPillClass(losses[1])}" style="--h:${pingPillH(losses[1])}"><span class="lp-fill"></span></div>
           <span class="loss-pill-label">电信</span>
         </div>
         <div class="loss-pill-cell">
-          <div class="loss-pill ${pingPillClass(pings[2])}" style="--h:${pingPillH(pings[2])}"><span class="lp-fill"></span></div>
+          <div class="loss-pill ${pingPillClass(losses[2])}" style="--h:${pingPillH(losses[2])}"><span class="lp-fill"></span></div>
           <span class="loss-pill-label">移动</span>
         </div>
       </div>
@@ -749,8 +749,8 @@ function updateServerCard(card, s, m){
     const sp = infoRows[2].querySelector('span:last-child');
     if(sp && sp.textContent !== loadStr) sp.textContent = loadStr;
   }
-  const pings = pingValues(s);
-  const pingAvg = Math.round(pings.reduce((a,v) => a + (v > 0 ? v : 0), 0) / Math.max(1, pings.filter(v => v > 0).length));
+  const latencies = [s.time_10010, s.time_189, s.time_10086].map(p => num(p));
+  const pingAvg = Math.round(latencies.reduce((a,v) => a + (v > 0 ? v : 0), 0) / Math.max(1, latencies.filter(v => v > 0).length));
   if(infoRows[3]){
     const sp = infoRows[3].querySelector('span:last-child');
     const newVal = pingAvg > 0 ? pingAvg + ' ms' : '–';
@@ -758,14 +758,15 @@ function updateServerCard(card, s, m){
   }
   if(infoRows[4]){
     const sp = infoRows[4].querySelector('span:last-child');
-    const newVal = pings.map(v => v === 0 ? '–' : v.toFixed(0)).join(' / ') + ' ms';
+    const newVal = latencies.map(v => v === 0 ? '–' : v.toFixed(0)).join(' / ') + ' ms';
     if(sp && sp.textContent !== newVal) sp.textContent = newVal;
   }
   // loss pills -- only if changed
   const pills = card.querySelectorAll('.loss-pill');
-  const pingPillClass = (v) => v === 0 ? 'bad' : v >= 150 ? 'bad' : v >= 50 ? 'warn' : 'ok';
-  const pingPillH = (v) => v === 0 ? 1 : clamp(v / 200, 0, 1).toFixed(2);
-  pings.forEach((v, i) => {
+  const losses = pingValues(s);
+  const pingPillClass = (v) => v >= 40 ? 'bad' : v >= 30 ? 'warn' : 'ok';
+  const pingPillH = (v) => clamp(v / 100, 0, 1).toFixed(2);
+  losses.forEach((v, i) => {
     if(!pills[i]) return;
     const newClass = 'loss-pill ' + pingPillClass(v);
     if(pills[i].className !== newClass) pills[i].className = newClass;
