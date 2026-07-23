@@ -558,16 +558,20 @@ function renderServersCards(){
     const loadStr = s.load_1 === -1 ? '–' : num(s.load_1).toFixed(2);
     const losses = lossValues(s);
     const lossStr = losses.map(v => v.toFixed(0)).join(' / ');
+    const memUsed = humanMinMBFromMB(s.memory_used);
+    const memTotal = humanMinMBFromMB(s.memory_total);
+    const hddUsed = humanMinMBFromMB(s.hdd_used);
+    const hddTotal = humanMinMBFromMB(s.hdd_total);
     return `<div class="card${m.online ? '' : ' offline'}${alertClass}${osClass(s.os)}" data-key="${esc(s._key)}" data-online="${m.online ? 1 : 0}">
       <div class="card-header"><div class="card-title">${esc(s.name || '-')}${spec ? `<span class="card-spec-chip" title="CPU 核心 / 总内存">${esc(spec)}</span>` : ''} <span class="tag">${esc(s.location || '-')}</span></div>${protoPill(s)}</div>
       <div class="card-traffic">
         <div class="traffic-label">月流量</div>
         <div class="traffic-value">${trafficCaps(s)}</div>
       </div>
-      <div class="card-stats">
-        <div class="stat-item"><span class="stat-label">CPU</span><span class="stat-value">${cpuPct.toFixed(0)}%</span><div class="progress-bar ${cpuColor}"><i style="width:${cpuPct.toFixed(1)}%"></i></div></div>
-        <div class="stat-item"><span class="stat-label">内存</span><span class="stat-value">${m.memPct.toFixed(0)}%</span><div class="progress-bar ${memColor}"><i style="width:${m.memPct.toFixed(1)}%"></i></div></div>
-        <div class="stat-item"><span class="stat-label">硬盘</span><span class="stat-value">${m.hddPct.toFixed(0)}%</span><div class="progress-bar ${hddColor}"><i style="width:${m.hddPct.toFixed(1)}%"></i></div></div>
+      <div class="card-gauges">
+        <div class="gauge-item"><div class="gauge-circle ${cpuColor}" style="--p:${cpuPct/100}"><span>${cpuPct.toFixed(0)}%</span></div><span class="gauge-label">CPU</span></div>
+        <div class="gauge-item"><div class="gauge-circle ${memColor}" style="--p:${m.memPct/100}"><span>${m.memPct.toFixed(0)}%</span></div><span class="gauge-label">内存</span></div>
+        <div class="gauge-item"><div class="gauge-circle ${hddColor}" style="--p:${m.hddPct/100}"><span>${m.hddPct.toFixed(0)}%</span></div><span class="gauge-label">硬盘</span></div>
       </div>
       <div class="card-info">
         <div class="info-row"><span>负载</span><span>${loadStr}</span></div>

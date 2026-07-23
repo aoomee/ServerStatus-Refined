@@ -152,12 +152,15 @@ body.dark .danger-btn{color:var(--red)}
 .traffic-label{font-size:11px;color:var(--text-muted);font-weight:500;letter-spacing:.5px}
 .traffic-value{font-size:14px;font-weight:700}
 
-/* ── Card stats grid ── */
-.card-stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:.6rem;padding:.4rem 0}
-.stat-item{display:flex;flex-direction:column;align-items:center;gap:2px;text-align:center}
-.stat-item .stat-label{font-size:11px;color:var(--text-muted);font-weight:500}
-.stat-item .stat-value{font-size:13px;color:var(--text);font-weight:600;font-variant-numeric:tabular-nums}
-.stat-item .progress-bar{width:100%;margin-top:2px}
+/* ── Card gauges ── */
+.card-gauges{display:flex;justify-content:space-around;align-items:center;padding:.5rem 0;gap:.5rem}
+.gauge-item{display:flex;flex-direction:column;align-items:center;gap:.3rem}
+.gauge-circle{position:relative;width:52px;height:52px;border-radius:50%;background:conic-gradient(var(--green) calc(var(--p,0)*1turn),var(--border) 0);display:flex;align-items:center;justify-content:center}
+.gauge-circle::before{content:'';position:absolute;inset:4px;border-radius:50%;background:var(--surface)}
+.gauge-circle span{position:relative;font-size:11px;font-weight:700;color:var(--text);font-variant-numeric:tabular-nums}
+.gauge-circle.warn{background:conic-gradient(var(--orange) calc(var(--p,0)*1turn),var(--border) 0)}
+.gauge-circle.bad{background:conic-gradient(var(--red) calc(var(--p,0)*1turn),var(--border) 0)}
+.gauge-label{font-size:11px;color:var(--text-muted);font-weight:500}
 
 /* ── Card info rows ── */
 .card-info{display:flex;flex-direction:column;gap:.3rem;padding:.4rem 0;border-top:1px solid var(--border);font-size:12px}
