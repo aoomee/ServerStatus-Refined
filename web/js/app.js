@@ -494,15 +494,6 @@ function packetLossLine(s){
 function chartLegend(series){
   return `<div class="chart-legend">${series.map(item => `<span><i style="background:${esc(item.color)}"></i>${esc(item.label)}</span>`).join('')}</div>`;
 }
-function buckets(s){
-  return `<span class="buckets-wrap" title="联通 / 电信 / 移动">${[s.ping_10010, s.ping_189, s.ping_10086].map(p => {
-    const v = clamp(num(p), 0, 100);
-    const h = v / 100;
-    const level = v >= 40 ? 'bad' : v >= 30 ? 'warn' : 'ok';
-    return `<span class="bucket" data-lv="${level}"><i style="--h:${h.toFixed(2)}"></i></span>`;
-  }).join('')}</span>`;
-}
-
 function serverRowStructSig(s, m){
   return [m.online ? 1 : 0, m.rowLevel, s.online4, s.online6, s.os, s.name, s.type, s.location].join('\u001f');
 }
