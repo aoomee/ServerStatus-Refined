@@ -97,7 +97,7 @@ a:hover{color:var(--accent-hover)}
 .toolbar-group{display:flex;flex-direction:column;gap:.3rem;justify-content:flex-end;align-items:center}
 .toolbar-group label,.toolbar-group .toolbar-label{display:block;color:var(--text-muted);font-size:11px;font-weight:500;line-height:1.2;text-align:center;width:100%}
 .toolbar-group input,.toolbar-group select,.toolbar-group .icon-text,.toolbar-group .segmented button{height:36px;border:1px solid var(--border);background:var(--surface);color:var(--text);border-radius:var(--radius-sm);padding:0 .75rem;outline:none;transition:background-color .2s ease-out,border-color .2s ease-out,color .2s ease-out,box-shadow .2s ease-out,transform .15s ease-out;font-size:14px;display:flex;align-items:center;justify-content:center;line-height:1}
-.toolbar-group input{min-width:225px;display:block;text-align:center;line-height:34px;padding:0 .75rem}
+.toolbar-group input{min-width:235px;display:block;text-align:center;line-height:34px;padding:0 .75rem}
 .toolbar-group input::placeholder{text-align:center}
 .toolbar-group input:focus,.toolbar-group select:focus,.toolbar-group .icon-text:focus,.toolbar-group .segmented button:focus{border-color:var(--text);box-shadow:0 0 0 1px var(--text)}
 .toolbar-group input:hover,.toolbar-group select:hover,.toolbar-group .icon-text:hover{border-color:var(--border-strong)}
