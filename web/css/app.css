@@ -148,9 +148,12 @@ body.dark .danger-btn{color:var(--red)}
 .cards .card-bottom .info-row span:last-child{color:var(--text);font-family:var(--mono);font-size:12px;font-weight:600}
 
 /* ── Card traffic highlight ── */
-.card-traffic{display:flex;flex-direction:column;align-items:center;gap:.2rem;padding:.5rem 0;border-bottom:1px solid var(--border)}
+.card-traffic{display:flex;flex-direction:column;align-items:center;gap:.15rem;padding:.4rem 0;border-bottom:1px solid var(--border)}
 .traffic-label{font-size:11px;color:var(--text-muted);font-weight:500;letter-spacing:.5px}
-.traffic-value{font-size:14px;font-weight:700}
+.traffic-nums{display:flex;align-items:baseline;gap:.3rem;font-variant-numeric:tabular-nums}
+.traffic-nums .t-in{font-size:18px;font-weight:700;color:var(--green)}
+.traffic-nums .t-sep{font-size:14px;color:var(--text-dim);font-weight:400}
+.traffic-nums .t-out{font-size:18px;font-weight:700;color:var(--accent)}
 
 /* ── Card gauges ── */
 .card-gauges{display:flex;justify-content:space-around;align-items:center;padding:.5rem 0;gap:.5rem}

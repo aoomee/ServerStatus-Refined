@@ -566,7 +566,11 @@ function renderServersCards(){
       <div class="card-header"><div class="card-title">${esc(s.name || '-')}${spec ? `<span class="card-spec-chip" title="CPU 核心 / 总内存">${esc(spec)}</span>` : ''} <span class="tag">${esc(s.location || '-')}</span></div>${protoPill(s)}</div>
       <div class="card-traffic">
         <div class="traffic-label">月流量</div>
-        <div class="traffic-value">${trafficCaps(s)}</div>
+        <div class="traffic-nums">
+          <span class="t-in">${humanMinMBFromB(m.monthIn)}</span>
+          <span class="t-sep">/</span>
+          <span class="t-out">${humanMinMBFromB(m.monthOut)}</span>
+        </div>
       </div>
       <div class="card-gauges">
         <div class="gauge-item"><div class="gauge-circle ${cpuColor}" style="--p:${cpuPct/100}"><span>${cpuPct.toFixed(0)}%</span></div><span class="gauge-label">CPU</span></div>
