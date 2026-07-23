@@ -193,9 +193,9 @@ body.dark .danger-btn{color:var(--red)}
 .card-traffic{display:flex;flex-direction:column;align-items:center;gap:.05rem;padding:.2rem 0;border-bottom:1px solid var(--border)}
 .traffic-label{font-size:10px;color:var(--text-muted);font-weight:500;letter-spacing:.5px}
 .traffic-nums{display:flex;align-items:baseline;gap:.25rem;font-variant-numeric:tabular-nums}
-.traffic-nums .t-in{font-size:17px;font-weight:700;color:var(--green)}
+.traffic-nums .t-in{font-size:17px;font-weight:700;color:var(--text)}
 .traffic-nums .t-sep{font-size:13px;color:var(--text-dim);font-weight:400}
-.traffic-nums .t-out{font-size:17px;font-weight:700;color:var(--accent)}
+.traffic-nums .t-out{font-size:17px;font-weight:700;color:var(--text-muted)}
 
 /* ── Card gauges ── */
 .card-gauges{display:flex;justify-content:space-around;align-items:center;padding:.2rem 0;gap:.3rem}
