@@ -594,7 +594,7 @@ function renderServers(){
   });
   if(!rows.length){
     if(tbody.dataset.empty !== 'servers'){
-      tbody.innerHTML = `<tr class="empty-row"><td colspan="13" class="muted" style="text-align:center;padding:1rem;">无数据</td></tr>`;
+      tbody.innerHTML = `<tr class="empty-row"><td colspan="12" class="muted" style="text-align:center;padding:1rem;">无数据</td></tr>`;
       tbody.dataset.empty = 'servers';
     }
     return;
