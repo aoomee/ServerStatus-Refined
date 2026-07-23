@@ -581,7 +581,7 @@ function renderServersCards(){
         <div class="info-row"><span>速率</span><span class="net-speed"><span class="up">${humanMinKBFromB(s.network_tx)} ↑</span><span class="down">${humanMinKBFromB(s.network_rx)} ↓</span></span></div>
         <div class="info-row"><span>在线</span><span>${esc(s.uptime || '-')}</span></div>
         <div class="info-row"><span>负载</span><span>${loadStr}</span></div>
-        <div class="info-row"><span>延迟</span><span>${pingAvg} ms</span><span>丢包</span><span>${lossStr}%</span></div>
+        <div class="info-row split"><span>延迟</span><span>${pingAvg} ms</span><span class="sep"></span><span>丢包</span><span>${lossStr}%</span></div>
       </div>
       <div class="card-bottom">
         <div class="ping-bar">${buckets(s)}</div>
