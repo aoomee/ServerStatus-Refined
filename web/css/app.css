@@ -294,7 +294,8 @@ body.dark .modal-backdrop{background:rgba(0,0,0,.6)}
 .modal-close:hover{color:var(--text);background:var(--surface-hover)}
 .modal-content{font-size:14px;line-height:1.5;display:flex;flex-direction:column;gap:.75rem}
 
-.detail-modal{max-width:520px;max-height:85vh;overflow-y:auto;padding:1.2rem;animation:nezhaFade .2s ease-out}
+.detail-modal{max-width:520px;max-height:85vh;overflow-y:auto;padding:1.2rem;animation:nezhaFade .2s ease-out;scrollbar-width:none;-ms-overflow-style:none}
+.detail-modal::-webkit-scrollbar{display:none}
 
 /* ── Detail cards ── */
 .detail-card{border-radius:var(--radius);background:var(--surface);padding:.85rem 1rem;display:flex;flex-direction:column;gap:.55rem;box-shadow:0 1px 2px rgba(0,0,0,.06),0 0 0 1px var(--border)}
@@ -381,7 +382,8 @@ body.dark .modal-backdrop{background:rgba(0,0,0,.6)}
   .ops-overview{display:none}
   #serversCards{grid-template-columns:1fr !important}
   .modal-box{max-width:100%;border-radius:var(--radius);padding:1rem}
-  .modal-content{max-height:65vh;overflow:auto}
+  .modal-content{max-height:65vh;overflow:auto;scrollbar-width:none;-ms-overflow-style:none}
+  .modal-content::-webkit-scrollbar{display:none}
   .detail-grid,.config-fields{grid-template-columns:1fr}
   .detail-modal{max-width:100%;max-height:90vh;padding:1rem}
   .ops-toolbar{align-items:stretch}
