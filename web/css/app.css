@@ -259,7 +259,7 @@ body.dark .pill.off{background:var(--red)}
 .caps-traffic.duo .half+.half{border-left:1px solid var(--border)}
 
 /* ── Gauge half circle ── */
-.gauge-half{position:relative;width:38px;height:20px;display:inline-flex;align-items:center;justify-content:center;vertical-align:middle;line-height:1}
+.gauge-half{position:relative;width:38px;height:20px;display:flex;align-items:center;justify-content:center;margin:0 auto;line-height:1}
 .gauge-half svg{width:100%;height:100%;display:block}
 .gauge-half path{fill:none;stroke-width:7}
 .gauge-half .track{stroke:var(--border)}
